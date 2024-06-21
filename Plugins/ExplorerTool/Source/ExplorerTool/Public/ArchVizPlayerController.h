@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ArchVizSaveTool.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputcomponent.h"
-#include "TaskBar.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
-#include "RoadConstructionActor.h"
+#include "ArchVizRoadActor.h"
+#include "TaskBarDataAsset.h"
 #include "ArchVizPlayerController.generated.h"
 
 
@@ -37,28 +38,33 @@ protected:
 public:
 	
 	UPROPERTY()
-	TArray<ARoadConstructionActor*> RoadConstructionActors;
+	TArray<AArchVizRoadActor*> RoadConstructionActors;
 
 	UPROPERTY()
 	TArray<FConstructedRoad>  RoadInfo;
-
 
 	UPROPERTY()
 	UArchVizSaveTool* SaveTool;
 
 	UPROPERTY()
+	AArchVizActor* CurrentSelectedActor;
+
+	UPROPERTY()
 	FString SaveSlotName;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<UTaskBar> TaskBarClass;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTaskBar* TaskBar;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTaskBarDataAsset* TaskBarDataAsset;
 
-	UFUNCTION()
-	void WidgetSelected(FText SelectionName);
-
+	UFUNCTION(BlueprintCallable)
+	void ChangeRoadType(ERoadType RoadType);
+	UFUNCTION(BlueprintCallable)
+	void ChangeRoadState(ERoadState RoadState);
+	UFUNCTION(BlueprintCallable)
+	void ChangeRoadWidth(int RoadWidth);
+	UFUNCTION(BlueprintCallable)
+	void ChangeRoadMaterial(UMaterialInterface* NewMaterial);
+	UFUNCTION(BlueprintCallable)
+	void DeleteRoad();
+	UFUNCTION(BlueprintCallable)
+	void RemoveLastSplinePoint();
 };

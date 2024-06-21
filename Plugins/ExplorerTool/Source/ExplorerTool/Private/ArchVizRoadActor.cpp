@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "RoadConstructionActor.h"
+#include "ArchVizRoadActor.h"
 
 #include "ArchVizSaveTool.h"
 #include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
-ARoadConstructionActor::ARoadConstructionActor()
+AArchVizRoadActor::AArchVizRoadActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -38,20 +38,20 @@ ARoadConstructionActor::ARoadConstructionActor()
 }
 
 // Called when the game starts or when spawned
-void ARoadConstructionActor::BeginPlay()
+void AArchVizRoadActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void ARoadConstructionActor::Tick(float DeltaTime)
+void AArchVizRoadActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
 }
 
-void ARoadConstructionActor::AddRoadPoint(FVector SplineLocation)
+void AArchVizRoadActor::AddRoadPoint(FVector SplineLocation)
 {
     SplineLocation.Z = 20;
     SplineComponent->AddSplinePoint(SplineLocation, ESplineCoordinateSpace::Local);
@@ -67,7 +67,7 @@ void ARoadConstructionActor::AddRoadPoint(FVector SplineLocation)
         
 }
 
-void ARoadConstructionActor::UpdateRoadMeshes()
+void AArchVizRoadActor::UpdateRoadMeshes()
 {
     // Remove existing meshes
     for (auto* Mesh : SplineMeshes)
@@ -123,13 +123,23 @@ void ARoadConstructionActor::UpdateRoadMeshes()
         StartTangent = StartTangent.GetClampedToMaxSize(SegmentLength);
         EndTangent = EndTangent.GetClampedToMaxSize(SegmentLength);
 
+        FVector2D Scale = FVector2D(RoadWidth / 100, 1.0f);
+
         USplineMeshComponent* MeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
         MeshComponent->SetStaticMesh(RoadMesh);
         MeshComponent->SetMaterial(0, RoadMaterial);
         MeshComponent->RegisterComponent();
+        MeshComponent->SetStartScale(Scale);
+        MeshComponent->SetEndScale(Scale);
         MeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true); // 'true' ensures tangents are mirrored correctly
         MeshComponent->SetForwardAxis(ESplineMeshAxis::X);
         MeshComponent->SetupAttachment(SplineComponent);
+        MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+        // Set collision profile to use simple collision as complex
+        MeshComponent->SetCollisionProfileName(UCollisionProfile::BlockAllDynamic_ProfileName);
+
 
         SplineMeshes.Add(MeshComponent);
     }
@@ -150,6 +160,7 @@ void ARoadConstructionActor::UpdateRoadMeshes()
         StartTangent = StartTangent.GetClampedToMaxSize(LastSegmentLength);
         EndTangent = EndTangent.GetClampedToMaxSize(LastSegmentLength);
 
+        FVector2D Scale = FVector2D(RoadWidth / 100, 1.0f);
         USplineMeshComponent* MeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
         MeshComponent->SetStaticMesh(RoadMesh);
         MeshComponent->SetMaterial(0, RoadMaterial);
@@ -157,14 +168,22 @@ void ARoadConstructionActor::UpdateRoadMeshes()
         MeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true); // 'true' ensures tangents are mirrored correctly
         MeshComponent->SetForwardAxis(ESplineMeshAxis::X);
         MeshComponent->SetupAttachment(SplineComponent);
-
+        MeshComponent->SetStartScale(Scale);
+        MeshComponent->SetEndScale(Scale);
         // Optionally set the up vector to prevent twisting
         MeshComponent->SetSplineUpDir(FVector::UpVector, true);
+        MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+        MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+
+        // Set collision profile to use simple collision as complex
+        MeshComponent->SetCollisionProfileName(UCollisionProfile::BlockAllDynamic_ProfileName);
+
+
 
         SplineMeshes.Add(MeshComponent);
     }
 }
-void ARoadConstructionActor::SaveRoadState(const FString& SlotName)
+void AArchVizRoadActor::SaveRoadState(const FString& SlotName)
 {
     UArchVizSaveTool* SaveGameInstance = Cast<UArchVizSaveTool>(UGameplayStatics::CreateSaveGameObject(UArchVizSaveTool::StaticClass()));
 
@@ -191,7 +210,7 @@ void ARoadConstructionActor::SaveRoadState(const FString& SlotName)
     UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("RoadSaveSlot"), 0);
 }
 
-void ARoadConstructionActor::LoadRoadState(const FString& SlotName)
+void AArchVizRoadActor::LoadRoadState(const FString& SlotName)
 {
     UArchVizSaveTool* LoadGameInstance = Cast<UArchVizSaveTool>(UGameplayStatics::LoadGameFromSlot(TEXT("RoadSaveSlot"), 0));
     if (LoadGameInstance)
@@ -223,4 +242,13 @@ void ARoadConstructionActor::LoadRoadState(const FString& SlotName)
             }
         }
     }
+}
+
+void AArchVizRoadActor::RemoveLastPoint()
+{
+    if (SplineComponent->GetNumberOfSplinePoints() > 0)
+    {
+        SplineComponent->RemoveSplinePoint(SplineComponent->GetNumberOfSplinePoints() - 1);
+    }
+
 }

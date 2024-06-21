@@ -18,19 +18,8 @@ void AArchVizPlayerController::SetupInputComponent()
 void AArchVizPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	RoadConstructionActors.Add(GetWorld()->SpawnActor<ARoadConstructionActor>());
-	if(TaskBarClass)
-	{
-		TaskBar = CreateWidget<UTaskBar>(this, TaskBarClass);
-		if (TaskBar && TaskBarDataAsset) {
-			
-			TaskBar->TaskBarData = TaskBarDataAsset;
-			TaskBar->InitializeWidget();
-			TaskBar->AddToViewport();
-			TaskBar->ButtonClicked.BindUFunction(this, "WidgetSelected");
-			
-		}
-	}
+	
+	
 }
 
 AArchVizPlayerController::AArchVizPlayerController()
@@ -95,23 +84,39 @@ void AArchVizPlayerController::GetMouseClickLocation(const FInputActionValue& In
 			QueryParams.AddIgnoredActor(GetPawn());
 
 			if (GetWorld()->LineTraceSingleByChannel(HitResult, WorldLocation, TraceEnd, ECC_Visibility, QueryParams)) {
-				if (HitResult.GetActor()) {
-
-
-					GenerateRoadPoint(HitResult);
+				AActor* HitActor = HitResult.GetActor();
+				if (HitActor && !HitActor->IsA<AArchVizActor>()) {
+					if (CurrentSelectedActor && CurrentSelectedActor->IsA<AArchVizRoadActor>()) {
+						AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor);
+						if (RoadActor) {
+							if(RoadActor->RoadState == ERoadState::StartRoad)
+							{
+								RoadActor->RoadState = ERoadState::ExistingRoad;
+								RoadConstructionActors.Add(Cast<AArchVizRoadActor>(CurrentSelectedActor));
+								GenerateRoadPoint(HitResult);
+							}
+							if(RoadActor->RoadState == ERoadState::ExistingRoad)
+							{
+								GenerateRoadPoint(HitResult);
+							}
+						}
+					}
+					
 				}
-
-
-
+				else if (HitActor && HitActor->IsA<AArchVizActor>()) {
+					CurrentSelectedActor = Cast<AArchVizActor>(HitActor);
+				}
+				
 			}
 		}
 	}
 }
 
+
 void AArchVizPlayerController::GenerateRoadPoint(FHitResult HitResult)
 {
 
-	RoadConstructionActors[0]->AddRoadPoint(HitResult.Location);
+	Cast<AArchVizRoadActor>(CurrentSelectedActor)->AddRoadPoint(HitResult.Location);
 }
 
 void AArchVizPlayerController::SaveSlot()
@@ -131,7 +136,7 @@ void AArchVizPlayerController::SaveSlot()
 			FSaveSlotElement& SaveSlot = Subsystem->GetCurrentSaveGameSlot()->GameSlots.FindOrAdd(CurrentSaveSlotName);
 			SaveSlot.RoadElements.Empty(); // Clear previous data before saving new data
 
-			for (ARoadConstructionActor* RoadActor : RoadConstructionActors)
+			for (AArchVizRoadActor* RoadActor : RoadConstructionActors)
 			{
 				if (RoadActor)
 				{
@@ -197,7 +202,7 @@ void AArchVizPlayerController::LoadSlot()
 				// Recreate road actors from saved data
 				for (const FConstructedRoad& SaveData : SaveSlot->RoadElements)
 				{
-					ARoadConstructionActor* NewRoadActor = GetWorld()->SpawnActor<ARoadConstructionActor>();
+					AArchVizRoadActor* NewRoadActor = GetWorld()->SpawnActor<AArchVizRoadActor>();
 					RoadConstructionActors.Add(NewRoadActor);
 
 					USplineComponent* SplineComponent = NewRoadActor->SplineComponent;
@@ -228,7 +233,88 @@ void AArchVizPlayerController::LoadSlot()
 		}
 	}
 }
-void AArchVizPlayerController::WidgetSelected(FText SelectionName)
+
+void AArchVizPlayerController::ChangeRoadType(ERoadType RoadType)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, FString("got the message"));
+	if(CurrentSelectedActor)
+	{
+		if (AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor))
+		{
+			RoadActor->RoadType = RoadType;
+			RoadActor->UpdateRoadMeshes();
+		}
+	}
+	
+}
+
+void AArchVizPlayerController::ChangeRoadState(ERoadState RoadState)
+{
+	if (CurrentSelectedActor)
+	{
+		if (AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor))
+		{
+			RoadActor->RoadState = RoadState;
+			if (RoadState == ERoadState::EndRoad) {
+				CurrentSelectedActor = nullptr;
+			}
+			RoadActor->UpdateRoadMeshes();
+		}
+	}
+	if(RoadState == ERoadState::StartRoad)
+	{
+		CurrentSelectedActor = GetWorld()->SpawnActor<AArchVizRoadActor>();
+	}
+	
+}
+
+void AArchVizPlayerController::ChangeRoadWidth(int RoadWidth)
+{
+	if (CurrentSelectedActor)
+	{
+		if (AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor))
+		{
+			RoadActor->RoadWidth = RoadWidth;
+			RoadActor->UpdateRoadMeshes();
+		}
+	}
+	
+}
+
+void AArchVizPlayerController::ChangeRoadMaterial(UMaterialInterface* NewMaterial)
+{
+
+	if (CurrentSelectedActor)
+	{
+		if (AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor))
+		{
+			RoadActor->RoadMaterial = NewMaterial;
+			RoadActor->UpdateRoadMeshes();
+		}
+	}
+	
+}
+
+void AArchVizPlayerController::DeleteRoad()
+{
+	if (CurrentSelectedActor)
+	{
+		if (AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor))
+		{
+			RoadConstructionActors.Remove(RoadActor);
+			RoadActor->Destroy();
+			CurrentSelectedActor = nullptr;
+		}
+	}
+}
+
+void AArchVizPlayerController::RemoveLastSplinePoint()
+{
+	if (CurrentSelectedActor)
+	{
+		if (AArchVizRoadActor* RoadActor = Cast<AArchVizRoadActor>(CurrentSelectedActor))
+		{
+			RoadActor->RemoveLastPoint();
+			RoadActor->UpdateRoadMeshes();
+		}
+	}
 }

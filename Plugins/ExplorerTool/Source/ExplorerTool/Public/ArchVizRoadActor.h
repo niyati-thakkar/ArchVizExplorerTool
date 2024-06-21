@@ -3,26 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ArchVizActor.h"
+#include "TaskBarDataAsset.h"
 #include "GameFramework/Actor.h"
 #include "Components/SplineComponent.h"
 #include "Components/SplineMeshComponent.h"
-#include "RoadConstructionActor.generated.h"
+#include "ArchVizRoadActor.generated.h"
 
 
-UENUM()
-enum class ERoadType
-{
-	CurvedRoad,
-	StraightRoad
-};
+
 UCLASS()
-class EXPLORERTOOL_API ARoadConstructionActor : public AActor
+class EXPLORERTOOL_API AArchVizRoadActor : public AArchVizActor
 {
 	GENERATED_BODY()
 
 	
 public:
-	ARoadConstructionActor();
+	AArchVizRoadActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -41,6 +38,8 @@ public:
 	void SaveRoadState(const FString& SlotName);
 	UFUNCTION()
 	void LoadRoadState(const FString& SlotName);
+	void RemoveLastPoint();
+
 
 	UPROPERTY()
 	USplineComponent* SplineComponent;
@@ -62,4 +61,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	ERoadType RoadType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ERoadState RoadState;
 };

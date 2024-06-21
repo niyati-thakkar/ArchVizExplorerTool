@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RoadConstructionActor.h"
+#include "ArchVizRoadActor.h"
 #include "GameFramework/SaveGame.h"
 #include "ArchVizSaveTool.generated.h"
 
