@@ -27,7 +27,8 @@ AArchVizPlayerController::AArchVizPlayerController()
 	SaveSlotName = "GameSlotOne";
 
 	//static ConstructorHelpers::FObjectFinder<UTaskBarDataAsset> TaskBarDataAssetObj(TEXT("/ExplorerTool/DA_TaskBar.DA_TaskBar"));
-
+	FInputModeUIOnly InputMode;
+	
 
 }
 

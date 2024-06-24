@@ -25,7 +25,7 @@ public class ExplorerTool : ModuleRules
 		PublicDependencyModuleNames.AddRange(
 			new string[]
 			{
-				"Core", "UMG",
+				"Core", "UMG", "EnhancedInput"
 				// ... add other public dependencies that you statically link with here ...
 			}
 			);
