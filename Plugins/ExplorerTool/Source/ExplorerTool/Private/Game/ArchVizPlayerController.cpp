@@ -19,11 +19,12 @@ void AArchVizPlayerController::BeginPlay()
     InteriorManager = NewObject<UArchVizInteriorManager>(this);
     ConstructionManager = NewObject<UArchVizConstructionManager>(this);
     SaveLoadManager = NewObject<UArchVizSaveLoadManager>(this);
-   
+    ExteriorManager = NewObject<UArchVizExteriorManager>(this);
     RoadManager->SetUp();
     InteriorManager->SetUp();
     ConstructionManager->SetUp();
     SaveLoadManager->SetUp();
+    ExteriorManager->SetUp();
 
     if(UArchVizMasterWidget* DisplayWidget = Cast<UArchVizMasterWidget>(MasterWidget))
     {
@@ -144,6 +145,10 @@ UArchVizManager* AArchVizPlayerController::GetManager()
     if (CurrentMode == EArchVizMode::SaveLoadMode)
     {
         return SaveLoadManager;
+    }
+    if(CurrentMode == EArchVizMode::ExteriorMode)
+    {
+        return ExteriorManager;
     }
     return nullptr;
 }

@@ -97,6 +97,27 @@ void UArchVizMasterWidget::RemoveButtonStyle()
     {
         SaveLoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
     }
+    if(ExteriorModeButton)
+    {
+	    ExteriorModeButton->Button->SetStyle(ButtonStyleTaskbar);
+    }
+}
+
+void UArchVizMasterWidget::ChangeToExteriorMode()
+{
+    if (PlayerController->GetCurrentMode() == EArchVizMode::ExteriorMode)
+    {
+        PlayerController->ChangeMode(EArchVizMode::None);
+        WidgetSwitcher->SetVisibility(ESlateVisibility::Hidden);
+    }
+    else
+    {
+        RemoveButtonStyle();
+        PlayerController->ChangeMode(EArchVizMode::ExteriorMode);
+        WidgetSwitcher->SetActiveWidget(ExteriorModeWidget);
+        WidgetSwitcher->SetVisibility(ESlateVisibility::Visible);
+        SaveLoadModeButton->Button->SetStyle(ButtonStyleClicked);
+    }
 }
 
 bool UArchVizMasterWidget::Initialize()
@@ -110,11 +131,14 @@ bool UArchVizMasterWidget::Initialize()
         ConstructionModeButton = CreateWidget<UMasterWidgetButton>(this, MasterWidgetButtonClass);
         InteriorModeButton = CreateWidget<UMasterWidgetButton>(this, MasterWidgetButtonClass);
         SaveLoadModeButton = CreateWidget<UMasterWidgetButton>(this, MasterWidgetButtonClass);
+        ExteriorModeButton = CreateWidget<UMasterWidgetButton>(this, MasterWidgetButtonClass);
+
 
         RoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
         ConstructionModeButton->Button->SetStyle(ButtonStyleTaskbar);
         InteriorModeButton->Button->SetStyle(ButtonStyleTaskbar);
         SaveLoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
+        ExteriorModeButton->Button->SetStyle(ButtonStyleTaskbar);
 
         TaskBarButtonBox->ClearChildren();
         WidgetSwitcher->ClearChildren();
@@ -123,6 +147,7 @@ bool UArchVizMasterWidget::Initialize()
         TaskBarButtonBox->AddChild(ConstructionModeButton);
         TaskBarButtonBox->AddChild(InteriorModeButton);
         TaskBarButtonBox->AddChild(SaveLoadModeButton);
+        TaskBarButtonBox->AddChild(ExteriorModeButton);
         TaskBarButtonBox->AddChild(LogoButton);
         
     }
@@ -150,7 +175,11 @@ bool UArchVizMasterWidget::Initialize()
         SaveLoadModeWidget = CreateWidget<USaveLoadWidget>(this, SaveLoadWidgetClass);
         WidgetSwitcher->AddChild(SaveLoadModeWidget);
     }
-
+    if (ExteriorWidgetClass)
+    {
+        ExteriorModeWidget = CreateWidget<UExteriorWidget>(this, ExteriorWidgetClass);
+        WidgetSwitcher->AddChild(ExteriorModeWidget);
+    }
     if (RoadModeButton)
     {
         RoadModeButton->Button->OnClicked.AddDynamic(this, &UArchVizMasterWidget::ChangeToRoadMode);
@@ -199,6 +228,18 @@ bool UArchVizMasterWidget::Initialize()
             if (ButtonProp)
             {
                 SaveLoadModeButton->SetButtonProperties(ButtonProp->ButtonText, ButtonProp->ButtonPreview, EArchVizMode::SaveLoadMode);
+            }
+        }
+    }
+    if(ExteriorModeButton)
+    {
+        ExteriorModeButton->Button->OnClicked.AddDynamic(this, &UArchVizMasterWidget::ChangeToExteriorMode);
+        if (DataAsset)
+        {
+            FMasterWidgetButtonProp* ButtonProp = DataAsset->MasterWidgetContentMap.Find(EArchVizMode::ExteriorMode);
+            if (ButtonProp)
+            {
+                ExteriorModeButton->SetButtonProperties(ButtonProp->ButtonText, ButtonProp->ButtonPreview, EArchVizMode::ExteriorMode);
             }
         }
     }

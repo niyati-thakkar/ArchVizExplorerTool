@@ -26,7 +26,7 @@ void UArchVizInteriorManager::MouseClicked(FHitResult HitResult)
     
     if (CurrentActor)
     {
-        HitResult = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController())->GetMouseLocation({ CurrentActor });
+        
         CurrentActor->UnhighlightDeselectedActor();
         if (!CurrentActor->GetIsMoving())
         {
@@ -44,6 +44,7 @@ void UArchVizInteriorManager::MouseClicked(FHitResult HitResult)
            
         }else 
         {
+            HitResult = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController())->GetMouseLocation({ CurrentActor });
             bool bCanPlace = false;
 
             switch (CurrentActor->GetComponentType())

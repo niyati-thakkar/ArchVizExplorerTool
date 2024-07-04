@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "ArchVizUserWidget.h"
 #include "ConstructionWidget.h"
+#include "ExteriorWidget.h"
 #include "InteriorWidget.h"
 #include "MasterWidgetButton.h"
 #include "RoadWidget.h"
@@ -21,6 +22,8 @@
 /**
  *
  */
+
+
 
 UCLASS()
 class EXPLORERTOOL_API UArchVizMasterWidget : public UArchVizUserWidget
@@ -60,6 +63,9 @@ public:
 	UMasterWidgetButton* SaveLoadModeButton;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UMasterWidgetButton* ExteriorModeButton;
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	UButton* LogoButton;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -94,7 +100,18 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<USaveLoadWidget> SaveLoadWidgetClass;
-	
+
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	UExteriorWidget* ExteriorModeWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UExteriorWidget> ExteriorWidgetClass;
+
+	//UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	//UFenceModeWidget* ExteriorModeWidget;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//TSubclassOf<UFenceModeWidget> ExteriorWidgetClass;
 
 	UFUNCTION()
 	void ChangeToRoadMode();
@@ -113,6 +130,8 @@ public:
 	UFUNCTION()
 	void RemoveButtonStyle();
 
+	UFUNCTION()
+	void ChangeToExteriorMode();
 	bool Initialize() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

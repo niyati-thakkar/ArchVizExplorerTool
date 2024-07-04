@@ -9,12 +9,22 @@
  * 
  */
 UENUM(BlueprintType)
+enum class EStairType : uint8 {
+	ClosedStairs,
+	OpenStairs,
+	BoxStairs,
+};
+
+
+
+UENUM(BlueprintType)
 enum class EArchVizMode : uint8
 {
 	RoadMode,
 	ConstructionMode,
 	InteriorMode,
 	SaveLoadMode,
+	ExteriorMode,
 	None
 };
 

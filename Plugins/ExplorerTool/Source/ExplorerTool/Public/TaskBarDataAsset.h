@@ -59,5 +59,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* NewSlotIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FStairs_DA> StairsTypes;
+
 };
  

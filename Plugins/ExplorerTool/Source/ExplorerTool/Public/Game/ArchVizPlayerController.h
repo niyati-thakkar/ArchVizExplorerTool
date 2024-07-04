@@ -10,6 +10,7 @@
 #include "InputMappingContext.h"
 #include "RoadActors/ArchVizRoadActor.h"
 #include "Managers/ArchVizConstructionManager.h"
+#include "Managers/ArchVizExteriorManager.h"
 #include "Managers/ArchVizInteriorManager.h"
 #include "Managers/ArchVizRoadManager.h"
 #include "Managers/ArchVizSaveLoadManager.h"
@@ -92,5 +93,8 @@ public:
 
 	UPROPERTY()
 	UArchVizSaveLoadManager* SaveLoadManager;
+
+	UPROPERTY()
+	UArchVizExteriorManager* ExteriorManager;
 
 };

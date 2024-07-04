@@ -11,7 +11,44 @@
  */
 
 
+USTRUCT(BlueprintType)
+struct FSubStair
+{
+	GENERATED_BODY()
 
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* StairComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* RightGlassRailing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* LeftGlassRailing;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* RightGlassRailingTopWood;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMeshComponent* LeftGlassRailingTopWood;
+
+};
+
+USTRUCT(BlueprintType)
+struct FStairs_DA
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EStairType StairType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FText StairName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* StairPreview;
+
+};
 USTRUCT(BlueprintType)
 struct FRoadType
 {
