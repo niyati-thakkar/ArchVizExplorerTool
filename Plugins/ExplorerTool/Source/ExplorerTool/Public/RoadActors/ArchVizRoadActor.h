@@ -35,9 +35,9 @@ public:
 	UFUNCTION()
 	void UpdateRoadMeshes();
 	UFUNCTION()
-	void SaveRoadState(const FString& SlotName);
+	/*void SaveRoadState(const FString& SlotName);
 	UFUNCTION()
-	void LoadRoadState(const FString& SlotName);
+	void LoadRoadState(const FString& SlotName);*/
 	void RemoveLastPoint();
 
 

@@ -51,9 +51,10 @@ public:
 	EArchVizMode ButtonMode;
 
 	void NativeConstruct();
-	void SetButtonProperties(FText ButtonText, UTexture2D* ButtonIcon, EArchVizMode Mode);
+	UFUNCTION()
+	void SetButtonProperties(FText ButtonText, UTexture2D* ButtonIconParam, EArchVizMode Mode);
 
 	OnButtonSelected ButtonSelected;
-
+	UFUNCTION()
 	void ButtonClicked();
 };

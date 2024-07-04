@@ -23,6 +23,13 @@ class EXPLORERTOOL_API UArchVizSaveTool : public USaveGame
 
 public:
 	UPROPERTY()
-	TMap<FString, FSaveSlotElement> GameSlots;
+
+	TArray<FConstructedRoad> ConstructedRoads;
+
+	UPROPERTY()
+	TArray<FConstructedSlab> ConstructedSlabs;
+
+	UPROPERTY()
+	TArray<FConstructedWall> ConstructedWalls;
 
 };

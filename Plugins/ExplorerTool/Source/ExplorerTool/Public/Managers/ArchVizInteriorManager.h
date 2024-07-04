@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "ArchVizManager.h"
+#include "Interior/ArchVizInteriorActor.h"
 #include "ArchVizInteriorManager.generated.h"
 
 /**
@@ -16,7 +17,14 @@ class EXPLORERTOOL_API UArchVizInteriorManager:public UArchVizManager
 public:
 	void SetUp() override;
 	void End() override;
-	void FloorHit(FHitResult HitResult) override;
-	void ActorHit(AArchVizActor* ActorSelected) override;
+	void MouseClicked(FHitResult HitResult) override;
 	void Start() override;
+	void AttachToCeiling(UStaticMesh* StaticMesh);
+	void PlaceOnFloor(UStaticMesh* StaticMesh);
+	void PlaceOnWall(UStaticMesh* StaticMesh);
+	void DeleteButtonClicked();
+	void PlaceActor(FHitResult HitResult);
+	void ApplyRotation(FRotator InRotation) override;
+	AArchVizInteriorActor* CurrentActor;
+	TArray<AArchVizInteriorActor*> InteriorActors;
 };

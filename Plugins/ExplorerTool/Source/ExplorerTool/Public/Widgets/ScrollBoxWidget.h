@@ -50,13 +50,16 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddScrollBoxElement(FText ElementName, UTexture2D* ElementIcon);
+	void SetButtonSelected(FText ButtonText);
 
 	UFUNCTION(BlueprintCallable)
 	void OnElementClicked(FText ElementText);
+	void ClearAllChildren();
 
 	OnElementSelected ElementSelected;
 
 protected:
 	virtual void NativeConstruct() override;
-	
+	UScrollBoxElementWidget* SelectedButton;
+	TArray<UScrollBoxElementWidget*> ScrollBoxButtons;
 };

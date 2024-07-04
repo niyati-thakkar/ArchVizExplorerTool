@@ -33,7 +33,31 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TMap<EArchVizMode, FMasterWidgetButtonProp> MasterWidgetContentMap;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FConstructionWallMaterial> ConstructionWallMaterials;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray< FConstructionFloorMaterial> ConstructionFloorMaterials;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray< FConstructionRoofMaterial> ConstructionRoofMaterials;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FConstructionElement> ConstructionElements;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FInteriorItem> CeilingPlaceables;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FInteriorItem> FloorPlaceables;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FInteriorItem> WallPlaceables;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SavedSlotsLogo;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* SaveSlotIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* LoadSlotIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UTexture2D* NewSlotIcon;
 };
  

@@ -3,25 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ConstructionActors/ArchVizGridActor.h"
 #include "SaveLoad/ArchVizSaveTool.h"
 #include "GameFramework/PlayerController.h"
 #include "EnhancedInputcomponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
 #include "RoadActors/ArchVizRoadActor.h"
-#include "ConstructionActors/ArchVizFollowArrowActor.h"
 #include "Managers/ArchVizConstructionManager.h"
 #include "Managers/ArchVizInteriorManager.h"
 #include "Managers/ArchVizRoadManager.h"
 #include "Managers/ArchVizSaveLoadManager.h"
+
 #include "ArchVizPlayerController.generated.h"
+
 
 
 /**
  * 
  */
-
 class UArchVizSaveTool;
 
 UCLASS()
@@ -34,11 +33,11 @@ protected:
 
 	virtual void SetupInputComponent() override;
 	virtual void BeginPlay() override;
+	
 	void AddMappings();
-	void HandleArrowSelection(const FHitResult& HitResult);
-	void HighlightSelectedActor();
-	void UnhighlightDeselectedActor();
 	void GetMouseClickLocation(const FInputActionValue& InputAction);
+	void ApplyRotation(const FInputActionValue& InputAction);
+
 	UArchVizManager* GetManager();
 
 	//void SaveSlot();
@@ -46,8 +45,8 @@ protected:
 	
 
 public:
-	
-	
+	void Save();
+	FHitResult GetMouseLocation(const TArray<AActor*>& IgnoredActors);
 
 	UPROPERTY()
 	UArchVizSaveTool* SaveTool;
@@ -59,30 +58,26 @@ public:
 	UTaskBarDataAsset* TaskBarDataAsset;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AArchVizFollowArrowActor> FollowArrowActorClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AArchVizFollowArrowActor* FollowArrowActor;
 	FVector LastHitLocation;
+	void Load();
 
-	
-	void UpdateArrowPosition();
+	//void UpdateArrowPosition();
 	void Tick(float DeltaTime);
+
+	TArray<FString> FindFiles(FString Path, FString Extension);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* MasterWidget;
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeMode(EArchVizMode SetMode);
 	EArchVizMode GetCurrentMode();
-	void Save();
-	void Load();
-	UFUNCTION(BlueprintCallable)
-	void ArrowSelected();
+	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsArrowSelected = false;
 
-	UPROPERTY()
-	AArchVizGridActor* GridActor;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EArchVizMode CurrentMode = EArchVizMode::None;
 

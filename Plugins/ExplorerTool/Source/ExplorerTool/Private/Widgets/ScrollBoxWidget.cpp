@@ -14,6 +14,7 @@ void UScrollBoxWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	SB_Heading = CreateWidget<UTitleWidget>(this, TitleClass);
+	SelectedButton = nullptr;
 }
 
 
@@ -30,6 +31,18 @@ void UScrollBoxWidget::OnElementClicked(FText ElementText)
 {
 	UE_LOG(LogTemp, Log, TEXT("Element clicked: %s"), *ElementText.ToString());
 	ElementSelected.ExecuteIfBound(ElementText);
+	SetButtonSelected(ElementText);
+}
+void UScrollBoxWidget::ClearAllChildren()
+{
+	if (ElementScrollBox)
+	{
+		for (UScrollBoxElementWidget* Element : ScrollBoxButtons)
+		{
+			ElementScrollBox->RemoveChild(Element);
+		}
+	}
+	ScrollBoxButtons.Empty();
 }
 
 void UScrollBoxWidget::AddScrollBoxElement(FText ElementName, UTexture2D* ElementIcon)
@@ -46,6 +59,39 @@ void UScrollBoxWidget::AddScrollBoxElement(FText ElementName, UTexture2D* Elemen
 			NewElement->OnClickedDelegate.BindUObject(this, &UScrollBoxWidget::OnElementClicked);
 
 			ElementScrollBox->AddChild(NewElement);
+			ScrollBoxButtons.Add(NewElement);
+		}
+	}
+}
+void UScrollBoxWidget::SetButtonSelected(FText ButtonText)
+{
+	if(ButtonText.IsEmptyOrWhitespace())
+	{
+		if(SelectedButton)
+		{
+			SelectedButton->SetButtonNormal();
+			SelectedButton = nullptr;
+		}
+		
+		return;
+	}
+	for(UScrollBoxElementWidget* ele: ScrollBoxButtons)
+	{
+		if(ele->GetButtonText().EqualTo(ButtonText))
+		{
+			if(SelectedButton == ele)
+			{
+				SelectedButton->SetButtonNormal();
+				SelectedButton = nullptr;
+				return;
+			}
+			ele->SetButtonSelected();
+			if(SelectedButton)
+			{
+				SelectedButton->SetButtonNormal();
+			}
+			SelectedButton = ele;
+			return;
 		}
 	}
 }

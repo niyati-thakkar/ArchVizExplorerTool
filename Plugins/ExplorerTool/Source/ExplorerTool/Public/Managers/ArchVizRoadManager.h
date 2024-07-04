@@ -7,19 +7,20 @@
 #include "ArchVizManager.h"
 #include "RoadActors/ArchVizRoadActor.h"
 #include "ArchVizRoadManager.generated.h"
+class URoadWidget;
 /**
  * 
  */
+
 UCLASS()
 class EXPLORERTOOL_API UArchVizRoadManager :public UArchVizManager
 {
 	GENERATED_BODY()
 public:
-	
+	//UArchVizRoadManager();
 	void SetUp() override;
 	void End() override;
-	void FloorHit(FHitResult HitResult) override;
-	void ActorHit(AArchVizActor* ActorSelected) override;
+	void MouseClicked(FHitResult HitResult) override;
 	void Start() override;
 	UFUNCTION(BlueprintCallable)
 	void ChangeRoadType(ERoadType RoadType);
@@ -33,6 +34,9 @@ public:
 	void DeleteRoad();
 	UFUNCTION(BlueprintCallable)
 	void RemoveLastSplinePoint();
+
+
+	URoadWidget* RoadWidget;
 
 	AArchVizRoadActor* CurrentSelectedActor;
 

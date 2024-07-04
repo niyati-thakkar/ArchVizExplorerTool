@@ -13,7 +13,7 @@
 void URoadWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	PlayerController = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController());
+	
 
 	SetInputActionPriority(5);
 	SetIsFocusable(true);
@@ -21,18 +21,7 @@ void URoadWidget::NativeConstruct()
 	RoadWidthSpinBox->SetValue(100);
 	// Bind button click events
 	
-	if (RoadMaterial_SB)
-	{
-		RoadMaterial_SB->SetScrollBoxTitle(FText::FromString("Materials"), FColor::Blue);
-	}
-	if (RoadState_SB)
-	{
-		RoadState_SB->SetScrollBoxTitle(FText::FromString("States"), FColor::Green);
-	}
-	if (RoadType_SB)
-	{
-		RoadType_SB->SetScrollBoxTitle(FText::FromString("Types"), FColor::Red);
-	}
+	PlayerController = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController());
 
 	// Populate the scroll boxes with initial data
 	PopulateScrollBoxes();
@@ -55,7 +44,33 @@ bool URoadWidget::Initialize()
 	{
 		RoadWidthSpinBox->OnValueChanged.AddDynamic(this, &URoadWidget::HandleWidthChange);
 	}
-	
+	if(RoadSizeTitle)
+	{
+		RoadSizeTitle->SetTitleText(FText::FromString("Road Width"));
+		RoadSizeTitle->SetDesignBorderColor(FColor::Magenta);
+	}
+	if (DeleteTitle)
+	{
+		DeleteTitle->SetTitleText(FText::FromString("Delete"));
+		DeleteTitle->SetDesignBorderColor(FColor::Emerald);
+	}
+	if (UndoTitle)
+	{
+		UndoTitle->SetTitleText(FText::FromString("Undo"));
+		UndoTitle->SetDesignBorderColor(FColor::Cyan);
+	}
+	if (RoadMaterial_SB)
+	{
+		RoadMaterial_SB->SetScrollBoxTitle(FText::FromString("Materials"), FColor::Blue);
+	}
+	if (RoadState_SB)
+	{
+		RoadState_SB->SetScrollBoxTitle(FText::FromString("States"), FColor::Green);
+	}
+	if (RoadType_SB)
+	{
+		RoadType_SB->SetScrollBoxTitle(FText::FromString("Types"), FColor::Red);
+	}
 	return true;
 }
 
@@ -83,7 +98,6 @@ void URoadWidget::HandleRoadTypeElement(FText ElementText)
 {
 	// Handle element click event from scroll box elements
 	UE_LOG(LogTemp, Log, TEXT("Element clicked: %s"), *ElementText.ToString());
-	
 	for(FRoadType RoadTypeElement: DataAsset->RoadTypes)
 	{
 		if(RoadTypeElement.RoadTypeName.EqualTo(ElementText))
@@ -91,6 +105,7 @@ void URoadWidget::HandleRoadTypeElement(FText ElementText)
 			if(PlayerController)
 			{
 				PlayerController->RoadManager->ChangeRoadType(RoadTypeElement.RoadType);
+				break;
 			}
 		}
 	}
@@ -107,6 +122,7 @@ void URoadWidget::HandleRoadStateElement(FText ElementText)
 			if (PlayerController)
 			{
 				PlayerController->RoadManager->ChangeRoadState(RoadStateElement.RoadState);
+				break;
 			}
 		}
 	}
@@ -123,6 +139,7 @@ void URoadWidget::HandleRoadMaterialElement(FText ElementText)
 			if (PlayerController)
 			{
 				PlayerController->RoadManager->ChangeRoadMaterial(RoadMaterialElement.RoadMaterial);
+				break;
 			}
 		}
 	}
@@ -175,7 +192,7 @@ void URoadWidget::PopulateScrollBoxes()
 	RoadState_SB->ElementSelected.BindUObject(this, &URoadWidget::HandleRoadStateElement);
 	RoadType_SB->ElementSelected.BindUObject(this, &URoadWidget::HandleRoadTypeElement);
 	RoadMaterial_SB->ElementSelected.BindUObject(this, &URoadWidget::HandleRoadMaterialElement);
-	RoadMaterial_SB->AddToViewport();
+	
 	
 
 }

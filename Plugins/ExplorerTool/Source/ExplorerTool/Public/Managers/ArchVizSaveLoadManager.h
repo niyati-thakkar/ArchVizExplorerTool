@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "ArchVizManager.h"
+#include "ConstructionActors/ArchVizSlabActor.h"
+#include "ConstructionActors/ArchVizWallActor.h"
 #include "RoadActors/ArchVizRoadActor.h"
 #include "ArchVizSaveLoadManager.generated.h"
 
@@ -17,11 +19,31 @@ class EXPLORERTOOL_API UArchVizSaveLoadManager :public UArchVizManager
 public:
 	void SetUp() override;
 	void End() override;
-	void FloorHit(FHitResult HitResult) override;
-	void ActorHit(AArchVizActor* ActorSelected) override;
+	void MouseClicked(FHitResult HitResult) override;
 	void Start() override;
-	void SaveRoad(TArray<AArchVizRoadActor*> RoadConstructionActors);
-	void LoadRoad(TArray<AArchVizRoadActor*> RoadConstructionActors);
+	void CreateSlotIfNotExists(FString NewSlotName);
+	void SaveSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<
+		              AArchVizSlabActor*>& SlabConstructionActors);
+	void LoadSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<
+	              AArchVizSlabActor*>& SlabConstructionActors);
+	void SaveRoad(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<FConstructedRoad>& ConstructedRoads);
+	void LoadRoad(TArray<AArchVizRoadActor*>& RoadConstructionActors, const TArray<FConstructedRoad>& ConstructedRoads);
+
+	void SaveWall(TArray<AArchVizWallActor*>& WallConstructionActors, TArray<FConstructedWall>& ConstructedWalls);
+	void LoadWall(TArray<AArchVizWallActor*>& WallConstructionActors, const TArray<FConstructedWall>& ConstructedWalls);
+
+	void SaveSlab(TArray<AArchVizSlabActor*>& SlabConstructionActors, TArray<FConstructedSlab>& ConstructedSlabs);
+	void LoadSlab(TArray<AArchVizSlabActor*>& SlabConstructionActors, const TArray<FConstructedSlab>& ConstructedSlabs);
+
+	FString GetSlotName()
+	{
+		return SaveSlotName;
+	}
+	void SetSlotName(FString NewSlotName)
+	{
+		SaveSlotName = NewSlotName;
+	}
+	TArray<FConstructedFurniture> GetInteriorItems(AArchVizConstructionActor* Actor);
 	UPROPERTY()
 	FString SaveSlotName;
 };

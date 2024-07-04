@@ -5,11 +5,20 @@
 #include "Managers/ArchVizRoadManager.h"
 
 
+//UArchVizRoadManager::UArchVizRoadManager()
+//{
+//
+//    RoadWidget = nullptr;
+//    CurrentRoadState = ERoadState::StartRoad;
+//    //CurrentSelectedActor = nullptr;
+//}
+
 void UArchVizRoadManager::SetUp()
 {
 	
     ChangeRoadState(ERoadState::StartRoad);
-
+    RoadWidget = nullptr;
+    CurrentSelectedActor = nullptr;
 }
 
 void UArchVizRoadManager::End()
@@ -30,15 +39,14 @@ void UArchVizRoadManager::ChangeRoadType(ERoadType RoadType)
 
 void UArchVizRoadManager::ChangeRoadState(ERoadState RoadState)
 {
-    CurrentRoadState = RoadState;
     if (CurrentSelectedActor)
     {
-        if (RoadState == ERoadState::EndRoad)
+        if (RoadState == ERoadState::StartRoad || RoadState == ERoadState::EndRoad)
         {
             CurrentSelectedActor = nullptr;
         }
     }
-    
+    CurrentRoadState = RoadState;
 }
 
 void UArchVizRoadManager::ChangeRoadWidth(int RoadWidth)
@@ -89,26 +97,30 @@ void UArchVizRoadManager::RemoveLastSplinePoint()
         }
     }
 }
-
-void UArchVizRoadManager::FloorHit(FHitResult HitResult)
+void UArchVizRoadManager::MouseClicked(FHitResult HitResult)
 {
-    if (CurrentSelectedActor)
-    {
-        CurrentSelectedActor->AddRoadPoint(HitResult.Location);
-    }
     if (CurrentRoadState == ERoadState::StartRoad)
     {
         CurrentSelectedActor = GetWorld()->SpawnActor<AArchVizRoadActor>();
+        CurrentSelectedActor->AddRoadPoint(HitResult.Location);
         RoadConstructionActors.Add(CurrentSelectedActor);
-        CurrentRoadState = ERoadState::ExistingRoad;
+        ChangeRoadState(ERoadState::ExistingRoad);
+    }else
+    {
+        if (AArchVizRoadActor* Actor = Cast<AArchVizRoadActor>(HitResult.GetActor())) {
+            CurrentSelectedActor = Actor;
+            ChangeRoadState(ERoadState::ExistingRoad);
+        }
+        else if (CurrentSelectedActor && CurrentRoadState == ERoadState::ExistingRoad) {
+            CurrentSelectedActor->AddRoadPoint(HitResult.Location);
+        }
     }
+
+    
+    
+    
 }
 
-void UArchVizRoadManager::ActorHit(AArchVizActor* ActorSelected)
-{
-    CurrentSelectedActor = Cast<AArchVizRoadActor>(ActorSelected);
-    ChangeRoadState(ERoadState::ExistingRoad);
-}
 
 void UArchVizRoadManager::Start()
 {

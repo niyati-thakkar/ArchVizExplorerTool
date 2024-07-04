@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "../Game/ArchVizPlayerController.h"
 #include "ScrollBoxWidget.h"
 #include "UMG/Public/Blueprint/UserWidget.h"
 #include "UMG/Public/Components/HorizontalBox.h"
@@ -138,7 +137,6 @@ public:
 	void PopulateScrollBoxes();
 	UFUNCTION(BlueprintCallable)
 	void UpdateWidth();
-	AArchVizPlayerController* PlayerController;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	ERoadState CurrentRoadState = ERoadState::StartRoad;

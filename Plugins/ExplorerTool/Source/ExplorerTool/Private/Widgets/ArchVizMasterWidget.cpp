@@ -76,6 +76,32 @@ void UArchVizMasterWidget::ChangeToSaveLoadMode()
 void UArchVizMasterWidget::NativeConstruct()
 {
     Super::NativeConstruct();
+    
+}
+
+void UArchVizMasterWidget::RemoveButtonStyle()
+{
+    if (RoadModeButton)
+    {
+        RoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
+    }
+    if (ConstructionModeButton)
+    {
+        ConstructionModeButton->Button->SetStyle(ButtonStyleTaskbar);
+    }
+    if (InteriorModeButton)
+    {
+        InteriorModeButton->Button->SetStyle(ButtonStyleTaskbar);
+    }
+    if (SaveLoadModeButton)
+    {
+        SaveLoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
+    }
+}
+
+bool UArchVizMasterWidget::Initialize()
+{
+	Super::Initialize();
     PlayerController = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController());
     WidgetSwitcher->SetVisibility(ESlateVisibility::Hidden);
     if (MasterWidgetButtonClass)
@@ -97,6 +123,8 @@ void UArchVizMasterWidget::NativeConstruct()
         TaskBarButtonBox->AddChild(ConstructionModeButton);
         TaskBarButtonBox->AddChild(InteriorModeButton);
         TaskBarButtonBox->AddChild(SaveLoadModeButton);
+        TaskBarButtonBox->AddChild(LogoButton);
+        
     }
 
     if (RoadWidgetClass)
@@ -174,24 +202,5 @@ void UArchVizMasterWidget::NativeConstruct()
             }
         }
     }
-}
-
-void UArchVizMasterWidget::RemoveButtonStyle()
-{
-    if (RoadModeButton)
-    {
-        RoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
-    }
-    if (ConstructionModeButton)
-    {
-        ConstructionModeButton->Button->SetStyle(ButtonStyleTaskbar);
-    }
-    if (InteriorModeButton)
-    {
-        InteriorModeButton->Button->SetStyle(ButtonStyleTaskbar);
-    }
-    if (SaveLoadModeButton)
-    {
-        SaveLoadModeButton->Button->SetStyle(ButtonStyleTaskbar);
-    }
+    return true;
 }

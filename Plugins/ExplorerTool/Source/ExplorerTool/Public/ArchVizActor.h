@@ -19,7 +19,11 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
+	virtual void HighlightSelectedActor();
+	virtual void UnhighlightDeselectedActor();
+	virtual bool IsRotateable();
+	virtual void RotateActor(FRotator ApplyRotation = FRotator(0, 90, 0));
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 

@@ -25,3 +25,46 @@ void AArchVizActor::Tick(float DeltaTime)
 
 }
 
+void AArchVizActor::HighlightSelectedActor() {
+
+    TSet<UActorComponent*> ActorComponents = GetComponents();
+
+    for (auto& ActorComponent : ActorComponents) {
+
+        if (auto* Component = Cast<UPrimitiveComponent>(ActorComponent)) {
+
+            Component->SetRenderCustomDepth(true);
+
+            Component->CustomDepthStencilValue = 2;
+
+        }
+
+    }
+
+}
+
+void AArchVizActor::UnhighlightDeselectedActor() {
+
+    TSet<UActorComponent*> ActorComponents = GetComponents();
+
+    for (auto& ActorComponent : ActorComponents) {
+
+        if (auto* Component = Cast<UPrimitiveComponent>(ActorComponent)) {
+
+            Component->SetRenderCustomDepth(false);
+
+        }
+
+    }
+
+}
+
+bool AArchVizActor::IsRotateable()
+{
+    return false;
+}
+void AArchVizActor::RotateActor(FRotator ApplyRotation)
+{
+    
+	
+};

@@ -21,6 +21,7 @@
 /**
  *
  */
+
 UCLASS()
 class EXPLORERTOOL_API UArchVizMasterWidget : public UArchVizUserWidget
 {
@@ -93,7 +94,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<USaveLoadWidget> SaveLoadWidgetClass;
-	AArchVizPlayerController* PlayerController;
+	
 
 	UFUNCTION()
 	void ChangeToRoadMode();
@@ -108,7 +109,11 @@ public:
 	void ChangeToSaveLoadMode();
 
 	void NativeConstruct() override;
+
+	UFUNCTION()
 	void RemoveButtonStyle();
+
+	bool Initialize() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FButtonStyle ButtonStyleTaskbar;

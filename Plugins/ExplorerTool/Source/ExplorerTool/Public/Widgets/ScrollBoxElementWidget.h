@@ -43,16 +43,29 @@ public:
 public:
 	// Delegate to handle element clicked event
 	OnElementClicked OnClickedDelegate;
+	bool bIsSelected = false;
 
 	// Sets the text of the ElementName TextBlock
 	UFUNCTION(BlueprintCallable)
 	void SetElementNameAndIcon(FText NewElementText, UTexture2D* NewIcon);
-
+	bool GetIsSelected()
+	{
+		return bIsSelected;
+	}
+	FText GetButtonText();
+	void SetButtonSelected();
+	void SetButtonNormal();
 protected:
 	virtual void NativeConstruct() override;
-
+	FText ButtonName;
 private:
 	// Handler for the button click event
+	FButtonStyle ButtonNormal;
+	FButtonStyle ButtonPressed;
+	
+	
 	UFUNCTION()
 	void HandleButtonClick();
+	
+	
 };

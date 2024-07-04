@@ -46,10 +46,17 @@ enum class ERoadMaterial : uint8
 UENUM(BlueprintType)
 enum class EConstructionTypes : uint8
 {
+	None,
 	WallGeneration,
-	FloorGeneration,
 	SlabGeneration,
 	DoorAddition
+};
+UENUM(BlueprintType)
+enum class EInteriorItemType : uint8
+{
+	WallPlaceable,
+	FloorPlaceable,
+	CeilingPlaceable
 };
 UCLASS()
 class EXPLORERTOOL_API UArchVizEnums: public UObject

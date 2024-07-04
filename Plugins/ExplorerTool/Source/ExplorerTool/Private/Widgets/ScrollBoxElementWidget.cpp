@@ -1,6 +1,7 @@
 
 #include "Widgets/ScrollBoxElementWidget.h"
 
+#include "Brushes/SlateColorBrush.h"
 #include "Components/Button.h"
 #include "Components/VerticalBox.h"
 #include "Components/SizeBox.h"
@@ -13,6 +14,7 @@ void UScrollBoxElementWidget::SetElementNameAndIcon(FText NewElementText, UTextu
 	if (ElementName)
 	{
 		ElementName->SetText(NewElementText);
+		ButtonName = NewElementText;
 	}
 	if (Icon && NewIcon)
 	{
@@ -31,6 +33,14 @@ void UScrollBoxElementWidget::NativeConstruct()
 	{
 		ElementButton->OnClicked.AddDynamic(this, &UScrollBoxElementWidget::HandleButtonClick);
 	}
+
+	ButtonNormal.SetNormal(FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 0.1f)));
+	ButtonNormal.SetHovered(FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 0.1f)));
+	ButtonNormal.SetPressed(FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 0.1f)));
+
+	ButtonPressed.SetNormal(FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 0.4f)));
+	ButtonPressed.SetHovered(FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 0.4f)));
+	ButtonPressed.SetPressed(FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 0.4f)));
 }
 
 void UScrollBoxElementWidget::HandleButtonClick()
@@ -40,4 +50,18 @@ void UScrollBoxElementWidget::HandleButtonClick()
 		// Call the delegate and pass the text from ElementName
 		OnClickedDelegate.Execute(ElementName->GetText());
 	}
+}
+void UScrollBoxElementWidget::SetButtonSelected()
+{
+	ElementButton->SetStyle(ButtonPressed);
+	bIsSelected = true;
+}
+void UScrollBoxElementWidget::SetButtonNormal()
+{
+	ElementButton->SetStyle(ButtonNormal);
+	bIsSelected = false;
+}
+FText UScrollBoxElementWidget::GetButtonText()
+{
+	return ButtonName;
 }

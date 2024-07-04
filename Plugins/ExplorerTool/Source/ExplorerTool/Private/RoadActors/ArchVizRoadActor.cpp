@@ -8,11 +8,13 @@
 
 
 // Sets default values
+// Sets default values
 AArchVizRoadActor::AArchVizRoadActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+    // Set this actor to call Tick() every frame. You can turn this off to improve performance if you don't need it.
+    PrimaryActorTick.bCanEverTick = true;
 
+    // Create and set the root component
     SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
     RootComponent = SceneComponent;
 
@@ -21,21 +23,24 @@ AArchVizRoadActor::AArchVizRoadActor()
     if (StaticMeshAsset.Succeeded())
     {
         RoadMesh = StaticMeshAsset.Object;
-
-        // Load the material
-        static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialAsset(TEXT("/Game/Megascans/Surfaces/Fine_American_Road_sjfnch0a/MI_Fine_American_Road_sjfnch0a_2K.MI_Fine_American_Road_sjfnch0a_2K"));
-        if (MaterialAsset.Succeeded())
-        {
-            RoadMaterial = MaterialAsset.Object;
-        }
     }
 
-    // Initialize the first spline component
+    // Load the material
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialAsset(TEXT("/ExplorerTool/Materials/TwoYellowLines.TwoYellowLines"));
+    if (MaterialAsset.Succeeded())
+    {
+        RoadMaterial = MaterialAsset.Object;
+    }
+
+    // Initialize the spline component
     SplineComponent = CreateDefaultSubobject<USplineComponent>(TEXT("SplineComponent"));
     SplineComponent->SetupAttachment(SceneComponent);  // Correct use of SetupAttachment during initialization
     SplineComponent->ClearSplinePoints();
+
+    // Set the default road type
     RoadType = ERoadType::StraightRoad;
 }
+
 
 // Called when the game starts or when spawned
 void AArchVizRoadActor::BeginPlay()
@@ -126,6 +131,7 @@ void AArchVizRoadActor::UpdateRoadMeshes()
         FVector2D Scale = FVector2D(RoadWidth / 100, 1.0f);
 
         USplineMeshComponent* MeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+        MeshComponent->SetMobility(EComponentMobility::Movable);
         MeshComponent->SetStaticMesh(RoadMesh);
         MeshComponent->SetMaterial(0, RoadMaterial);
         MeshComponent->RegisterComponent();
@@ -133,7 +139,7 @@ void AArchVizRoadActor::UpdateRoadMeshes()
         MeshComponent->SetEndScale(Scale);
         MeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true); // 'true' ensures tangents are mirrored correctly
         MeshComponent->SetForwardAxis(ESplineMeshAxis::X);
-        MeshComponent->SetupAttachment(SplineComponent);
+        MeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
         MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
         MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
 
@@ -167,7 +173,7 @@ void AArchVizRoadActor::UpdateRoadMeshes()
         MeshComponent->RegisterComponent();
         MeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true); // 'true' ensures tangents are mirrored correctly
         MeshComponent->SetForwardAxis(ESplineMeshAxis::X);
-        MeshComponent->SetupAttachment(SplineComponent);
+        MeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
         MeshComponent->SetStartScale(Scale);
         MeshComponent->SetEndScale(Scale);
         // Optionally set the up vector to prevent twisting
@@ -183,66 +189,66 @@ void AArchVizRoadActor::UpdateRoadMeshes()
         SplineMeshes.Add(MeshComponent);
     }
 }
-void AArchVizRoadActor::SaveRoadState(const FString& SlotName)
-{
-    UArchVizSaveTool* SaveGameInstance = Cast<UArchVizSaveTool>(UGameplayStatics::CreateSaveGameObject(UArchVizSaveTool::StaticClass()));
-
-    FConstructedRoad ConstructedRoad;
-    for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); ++i)
-    {
-        ConstructedRoad.SplinePoints.Add(SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local));
-    }
-
-    ConstructedRoad.RoadType = RoadType;
-
-    if (RoadMaterial)
-    {
-        ConstructedRoad.RoadMaterialPath = RoadMaterial->GetPathName();
-    }
-
-    if (RoadMesh)
-    {
-        ConstructedRoad.MeshComponentPath = RoadMesh->GetPathName();
-    }
-
-    SaveGameInstance->GameSlots.FindOrAdd(SlotName).RoadElements.Add(ConstructedRoad);
-
-    UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("RoadSaveSlot"), 0);
-}
-
-void AArchVizRoadActor::LoadRoadState(const FString& SlotName)
-{
-    UArchVizSaveTool* LoadGameInstance = Cast<UArchVizSaveTool>(UGameplayStatics::LoadGameFromSlot(TEXT("RoadSaveSlot"), 0));
-    if (LoadGameInstance)
-    {
-        const FSaveSlotElement* SlotElement = LoadGameInstance->GameSlots.Find(SlotName);
-        if (SlotElement)
-        {
-            for (const FConstructedRoad& ConstructedRoad : SlotElement->RoadElements)
-            {
-                SplineComponent->ClearSplinePoints();
-                for (const FVector& Point : ConstructedRoad.SplinePoints)
-                {
-                    SplineComponent->AddSplinePoint(Point, ESplineCoordinateSpace::Local);
-                }
-
-                RoadType = ConstructedRoad.RoadType;
-
-                if (!ConstructedRoad.RoadMaterialPath.IsEmpty())
-                {
-                    RoadMaterial = Cast<UMaterialInterface>(StaticLoadObject(UMaterialInterface::StaticClass(), nullptr, *ConstructedRoad.RoadMaterialPath));
-                }
-
-                if (!ConstructedRoad.MeshComponentPath.IsEmpty())
-                {
-                    RoadMesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *ConstructedRoad.MeshComponentPath));
-                }
-
-                UpdateRoadMeshes();
-            }
-        }
-    }
-}
+//void AArchVizRoadActor::SaveRoadState(const FString& SlotName)
+//{
+//    UArchVizSaveTool* SaveGameInstance = Cast<UArchVizSaveTool>(UGameplayStatics::CreateSaveGameObject(UArchVizSaveTool::StaticClass()));
+//
+//    FConstructedRoad ConstructedRoad;
+//    for (int32 i = 0; i < SplineComponent->GetNumberOfSplinePoints(); ++i)
+//    {
+//        ConstructedRoad.SplinePoints.Add(SplineComponent->GetLocationAtSplinePoint(i, ESplineCoordinateSpace::Local));
+//    }
+//
+//    ConstructedRoad.RoadType = RoadType;
+//
+//    if (RoadMaterial)
+//    {
+//        ConstructedRoad.RoadMaterialPath = RoadMaterial->GetPathName();
+//    }
+//
+//    if (RoadMesh)
+//    {
+//        ConstructedRoad.MeshComponentPath = RoadMesh->GetPathName();
+//    }
+//
+//    SaveGameInstance->GameSlots.FindOrAdd(SlotName).RoadElements.Add(ConstructedRoad);
+//
+//    UGameplayStatics::SaveGameToSlot(SaveGameInstance, TEXT("RoadSaveSlot"), 0);
+//}
+//
+//void AArchVizRoadActor::LoadRoadState(const FString& SlotName)
+//{
+//    UArchVizSaveTool* LoadGameInstance = Cast<UArchVizSaveTool>(UGameplayStatics::LoadGameFromSlot(TEXT("RoadSaveSlot"), 0));
+//    if (LoadGameInstance)
+//    {
+//        const FSaveSlotElement* SlotElement = LoadGameInstance->GameSlots.Find(SlotName);
+//        if (SlotElement)
+//        {
+//            for (const FConstructedRoad& ConstructedRoad : SlotElement->RoadElements)
+//            {
+//                SplineComponent->ClearSplinePoints();
+//                for (const FVector& Point : ConstructedRoad.SplinePoints)
+//                {
+//                    SplineComponent->AddSplinePoint(Point, ESplineCoordinateSpace::Local);
+//                }
+//
+//                RoadType = ConstructedRoad.RoadType;
+//
+//                if (!ConstructedRoad.RoadMaterialPath.IsEmpty())
+//                {
+//                    RoadMaterial = Cast<UMaterialInterface>(StaticLoadObject(UMaterialInterface::StaticClass(), nullptr, *ConstructedRoad.RoadMaterialPath));
+//                }
+//
+//                if (!ConstructedRoad.MeshComponentPath.IsEmpty())
+//                {
+//                    RoadMesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *ConstructedRoad.MeshComponentPath));
+//                }
+//
+//                UpdateRoadMeshes();
+//            }
+//        }
+//    }
+//}
 
 void AArchVizRoadActor::RemoveLastPoint()
 {

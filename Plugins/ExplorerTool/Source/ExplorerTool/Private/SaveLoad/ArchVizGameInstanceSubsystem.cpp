@@ -1,4 +1,7 @@
+// ArchVizGameInstanceSubsystem.cpp
+
 #include "SaveLoad/ArchVizGameInstanceSubsystem.h"
+
 #include "Kismet/GameplayStatics.h"
 
 void UArchVizGameInstanceSubsystem::Initialize(FSubsystemCollectionBase& Collection)
@@ -6,17 +9,10 @@ void UArchVizGameInstanceSubsystem::Initialize(FSubsystemCollectionBase& Collect
     Super::Initialize(Collection);
 
     // Load all existing save slots on initialization
-    TArray<FString> SlotNames = GetAllSaveSlots();
-    for (const FString& SlotName : SlotNames)
-    {
-        if (!SaveSlots.Contains(SlotName))
-        {
-            SaveSlots.Add(SlotName);
-        }
-    }
+    SaveSlots = GetAllSaveSlots();
 
     // If the default save slot does not exist, create it
-    if (!CurrentSaveGame || !CurrentSaveGame->GameSlots.Contains("default"))
+    if (!SaveSlots.Contains("default"))
     {
         CreateSaveGameSlot("default");
         SaveGame();
@@ -33,14 +29,8 @@ void UArchVizGameInstanceSubsystem::Deinitialize()
 
 void UArchVizGameInstanceSubsystem::CreateSaveGameSlot(const FString& SlotName)
 {
-    if (!CurrentSaveGame)
-    {
-        CurrentSaveGame = Cast<UArchVizSaveTool>(UGameplayStatics::CreateSaveGameObject(UArchVizSaveTool::StaticClass()));
-    }
-
-    CurrentSaveGame->GameSlots.Add(SlotName, FSaveSlotElement());
+    CurrentSaveGame = Cast<UArchVizSaveTool>(UGameplayStatics::CreateSaveGameObject(UArchVizSaveTool::StaticClass()));
     SaveSlots.Add(SlotName); // Update the list of save slots
-
     CurrentSaveGameSlot = SlotName;
 }
 
@@ -54,34 +44,24 @@ void UArchVizGameInstanceSubsystem::SaveGame()
 
 void UArchVizGameInstanceSubsystem::LoadGame(const FString& SlotName)
 {
-    if (UArchVizSaveTool* LoadedSaveGame = Cast<UArchVizSaveTool>(UGameplayStatics::LoadGameFromSlot(SlotName, 0)))
+    CurrentSaveGame = Cast<UArchVizSaveTool>(UGameplayStatics::LoadGameFromSlot(SlotName, 0));
+    if (CurrentSaveGame)
     {
-        CurrentSaveGame = LoadedSaveGame;
+        CurrentSaveGameSlot = SlotName;
     }
     else
     {
-        CurrentSaveGame = Cast<UArchVizSaveTool>(UGameplayStatics::CreateSaveGameObject(UArchVizSaveTool::StaticClass()));
-    }
-
-    if (CurrentSaveGame->GameSlots.Contains(SlotName))
-    {
-        CurrentSaveGameSlot = SlotName;
+        UE_LOG(LogTemp, Warning, TEXT("Failed to load game from slot %s"), *SlotName);
     }
 }
 
 TArray<FString> UArchVizGameInstanceSubsystem::GetAllSaveSlots() const
 {
     TArray<FString> SlotNames;
-
-    if (CurrentSaveGame)
+    IFileManager::Get().FindFiles(SlotNames, *FPaths::ProjectSavedDir(), *FString::Printf(TEXT("%s.sav"), *CurrentSaveGameSlot));
+    for (auto& SaveName : SlotNames)
     {
-        SlotNames.Reserve(CurrentSaveGame->GameSlots.Num());
-
-        for (const auto& Slot : CurrentSaveGame->GameSlots)
-        {
-            SlotNames.Add(Slot.Key);
-        }
+        SaveName = FPaths::GetBaseFilename(SaveName);
     }
-
     return SlotNames;
 }
