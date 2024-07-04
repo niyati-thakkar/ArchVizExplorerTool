@@ -2,6 +2,7 @@
 
 #include "Managers/ArchVizInteriorManager.h"
 #include "Interior/ArchVizInteriorActor.h"
+#include "Game/ArchVizPlayerController.h"
 #include "ConstructionActors/ArchVizSlabActor.h"
 #include "ConstructionActors/ArchVizWallActor.h"
 
@@ -22,9 +23,10 @@ void UArchVizInteriorManager::End()
 
 void UArchVizInteriorManager::MouseClicked(FHitResult HitResult)
 {
-
+    
     if (CurrentActor)
     {
+        HitResult = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController())->GetMouseLocation({ CurrentActor });
         CurrentActor->UnhighlightDeselectedActor();
         if (!CurrentActor->GetIsMoving())
         {
@@ -63,7 +65,7 @@ void UArchVizInteriorManager::MouseClicked(FHitResult HitResult)
             {
                 //HitResult.Location.Z = HitResult.GetActor()->GetActorLocation().Z;
                 CurrentActor->SetActorLocation(HitResult.Location);
-                CurrentActor->SetActorRotation(HitResult.GetActor()->GetActorRotation());
+                //CurrentActor->SetActorRotation(HitResult.GetActor()->GetActorRotation());
                 CurrentActor->AdjustPositionForPlacement();
                 CurrentActor->SetIsMoving(false);
                 CurrentActor->AttachToActor(HitResult.GetActor(), FAttachmentTransformRules::KeepWorldTransform);
@@ -161,7 +163,7 @@ void UArchVizInteriorManager::PlaceActor(FHitResult HitResult)
         {
             //HitResult.Location.Z = HitResult.GetActor()->GetActorLocation().Z;
             CurrentActor->SetActorLocation(HitResult.Location);
-            CurrentActor->SetActorRotation(HitResult.GetActor()->GetActorRotation());
+            //CurrentActor->SetActorRotation(HitResult.GetActor()->GetActorRotation());
             CurrentActor->AdjustPositionForPlacement();
             CurrentActor->SetIsMoving(false);
             CurrentActor->AttachToActor(HitResult.GetActor(), FAttachmentTransformRules::KeepWorldTransform);
