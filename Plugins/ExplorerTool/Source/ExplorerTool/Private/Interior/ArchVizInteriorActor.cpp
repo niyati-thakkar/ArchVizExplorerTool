@@ -31,7 +31,7 @@ void AArchVizInteriorActor::Tick(float DeltaSeconds)
 	        
             if (ComponentType == EInteriorItemType::WallPlaceable && Actor->IsA(AArchVizWallActor::StaticClass()))
             {
-                SetActorRotation(Cast<AArchVizWallActor>(Actor)->GetRotation() + FRotator(0, 90, 0));
+                SetActorRotation(Cast<AArchVizWallActor>(Actor)->GetRotation());
             }
 
         }
