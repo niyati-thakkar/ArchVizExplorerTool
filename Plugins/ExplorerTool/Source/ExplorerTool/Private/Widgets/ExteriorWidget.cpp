@@ -4,9 +4,7 @@
 #include "Game/ArchVizPlayerController.h"
 
 
-void UExteriorWidget::HandleDeleteButtonClicked(float RoadWidth)
-{
-}
+
 void UExteriorWidget::NativeConstruct()
 {
 	Super::NativeConstruct();

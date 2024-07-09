@@ -32,4 +32,7 @@ public:
 	UPROPERTY()
 	TArray<FConstructedWall> ConstructedWalls;
 
+	UPROPERTY()
+	TArray<FStairsSaveData> ConstructedStairs;
+
 };

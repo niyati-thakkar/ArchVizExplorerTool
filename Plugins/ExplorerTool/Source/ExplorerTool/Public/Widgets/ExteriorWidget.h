@@ -126,10 +126,8 @@ public:
 	void HandleNumberOfStairsChanged(float Value);
 	UFUNCTION(BlueprintCallable)
 	void HandleStairsTypeChanged(FText ElementText);
-	void HandleDeleteButtonClicked();
 	UFUNCTION(BlueprintCallable)
-	void HandleDeleteButtonClicked(float RoadWidth);
-
+	void HandleDeleteButtonClicked();
 
 
 	UFUNCTION(BlueprintCallable)

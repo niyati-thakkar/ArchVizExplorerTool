@@ -25,5 +25,7 @@ public:
 	void End();
 	void SetUp();
 	void DeleteStairs();
+	void ApplyRotation(FRotator InRotation = FRotator::ZeroRotator) override;
 	AStaircaseActor* CurrentSelectedActor;
+	TArray<AStaircaseActor*> SpawnedStairs;
 };

@@ -47,6 +47,7 @@ void UArchVizExteriorManager::ChangeStairsType(EStairType StairType)
     if (!IsValid(CurrentSelectedActor))
     {
         CurrentSelectedActor = GetWorld()->SpawnActor<AStaircaseActor>();
+        SpawnedStairs.Add(CurrentSelectedActor);
         CurrentSelectedActor->SetIsMoving(true);
     }
     CurrentSelectedActor->SetStairType(StairType);
@@ -82,7 +83,7 @@ void UArchVizExteriorManager::MouseClicked(FHitResult HitResult)
         {
 
             //HitResult.Location.Z = HitResult.GetActor()->GetActorLocation().Z;
-            CurrentSelectedActor->SetActorLocation(HitResult.Location);
+            //CurrentSelectedActor->SetActorLocation(HitResult.Location);
 
             CurrentSelectedActor->SetIsMoving(false);
             CurrentSelectedActor = nullptr;
@@ -116,4 +117,9 @@ void UArchVizExteriorManager::DeleteStairs()
         CurrentSelectedActor->Destroy();
         CurrentSelectedActor = nullptr;
     }
+}
+
+void UArchVizExteriorManager::ApplyRotation(FRotator InRotation)
+{
+    CurrentSelectedActor->RotateActor(InRotation);
 }

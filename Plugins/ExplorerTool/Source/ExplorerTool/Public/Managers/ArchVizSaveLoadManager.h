@@ -6,6 +6,7 @@
 #include "ArchVizManager.h"
 #include "ConstructionActors/ArchVizSlabActor.h"
 #include "ConstructionActors/ArchVizWallActor.h"
+#include "ExteriorActors/StaircaseActor.h"
 #include "RoadActors/ArchVizRoadActor.h"
 #include "ArchVizSaveLoadManager.generated.h"
 
@@ -23,9 +24,12 @@ public:
 	void Start() override;
 	void CreateSlotIfNotExists(FString NewSlotName);
 	void SaveSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<
-		              AArchVizSlabActor*>& SlabConstructionActors);
+	              AArchVizSlabActor*>& SlabConstructionActors, TArray<AStaircaseActor*> SpawnedStairs);
 	void LoadSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<
-	              AArchVizSlabActor*>& SlabConstructionActors);
+	              AArchVizSlabActor*>& SlabConstructionActors, TArray<AStaircaseActor*> StairConstructionActors);
+	void SaveStairs(TArray<AStaircaseActor*>& StairConstructionActors, TArray<FStairsSaveData>& ConstructedStairs);
+	void LoadStairs(TArray<AStaircaseActor*>& SlabConstructionActors, const TArray<FStairsSaveData>& ConstructedSlabs);
+
 	void SaveRoad(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<FConstructedRoad>& ConstructedRoads);
 	void LoadRoad(TArray<AArchVizRoadActor*>& RoadConstructionActors, const TArray<FConstructedRoad>& ConstructedRoads);
 

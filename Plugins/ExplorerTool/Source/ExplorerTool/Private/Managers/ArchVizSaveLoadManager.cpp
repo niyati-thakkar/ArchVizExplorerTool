@@ -4,6 +4,7 @@
 
 
 #include "EngineUtils.h"
+#include "SAssetTagItem.h"
 #include "SaveLoad/ArchVizGameInstanceSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 #include "RoadActors/ArchVizRoadActor.h"
@@ -12,6 +13,7 @@
 #include "Components/SplineComponent.h"
 #include "Materials/MaterialInterface.h"
 #include "Engine/StaticMesh.h"
+#include "ExteriorActors/StaircaseActor.h"
 #include "Interior/ArchVizInteriorActor.h"
 
 void UArchVizSaveLoadManager::SetUp()
@@ -44,7 +46,7 @@ void UArchVizSaveLoadManager::CreateSlotIfNotExists(FString NewSlotName)
         }
     }
 }
-void UArchVizSaveLoadManager::SaveSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<AArchVizSlabActor*>& SlabConstructionActors)
+void UArchVizSaveLoadManager::SaveSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<AArchVizSlabActor*>& SlabConstructionActors, TArray<AStaircaseActor*> SpawnedStairs)
 {
     if (UArchVizGameInstanceSubsystem* Subsystem = GetWorld()->GetGameInstance()->GetSubsystem<UArchVizGameInstanceSubsystem>())
     {
@@ -62,13 +64,14 @@ void UArchVizSaveLoadManager::SaveSlot(TArray<AArchVizRoadActor*>& RoadConstruct
             SaveRoad(RoadConstructionActors, SaveSlot->ConstructedRoads);
             SaveWall(WallConstructionActors, SaveSlot->ConstructedWalls);
             SaveSlab(SlabConstructionActors, SaveSlot->ConstructedSlabs);
+            SaveStairs(SpawnedStairs, SaveSlot->ConstructedStairs);
 
             Subsystem->SaveGame();
         }
     }
 }
 
-void UArchVizSaveLoadManager::LoadSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<AArchVizSlabActor*>& SlabConstructionActors)
+void UArchVizSaveLoadManager::LoadSlot(TArray<AArchVizRoadActor*>& RoadConstructionActors, TArray<AArchVizWallActor*>& WallConstructionActors, TArray<AArchVizSlabActor*>& SlabConstructionActors, TArray<AStaircaseActor*> StairConstructionActors)
 {
     if (UArchVizGameInstanceSubsystem* Subsystem = GetWorld()->GetGameInstance()->GetSubsystem<UArchVizGameInstanceSubsystem>())
     {
@@ -82,7 +85,55 @@ void UArchVizSaveLoadManager::LoadSlot(TArray<AArchVizRoadActor*>& RoadConstruct
             LoadRoad(RoadConstructionActors, CurrentSaveGame->ConstructedRoads);
             LoadWall(WallConstructionActors, CurrentSaveGame->ConstructedWalls);
             LoadSlab(SlabConstructionActors, CurrentSaveGame->ConstructedSlabs);
+            LoadStairs(StairConstructionActors, CurrentSaveGame->ConstructedStairs);
         }
+    }
+}
+void UArchVizSaveLoadManager::SaveStairs(TArray<AStaircaseActor*>& StairConstructionActors, TArray<FStairsSaveData>& ConstructedStairs)
+{
+    ConstructedStairs.Empty();
+
+    for(AStaircaseActor* StairActor : StairConstructionActors)
+    {
+	    if(StairActor)
+	    {
+            FStairsSaveData StairData;
+
+            StairData.StairType = StairActor->GetStairType();
+            StairData.StairsWidth = StairActor->GetWidth();
+            StairData.StairsDepth = StairActor->GetDepth();
+            StairData.StairsLength = StairActor->GetLength();
+            StairData.NumberOfStairs = StairActor->GetNumberOfStairs();
+            StairData.StairTransform = StairActor->GetTransform();
+            ConstructedStairs.Add(StairData);
+	    }
+        
+    }
+}
+void UArchVizSaveLoadManager::LoadStairs(TArray<AStaircaseActor*>& StairConstructionActors, const TArray<FStairsSaveData>& ConstructedStairs)
+{
+    for (AStaircaseActor* SlabActor : StairConstructionActors)
+    {
+        SlabActor->Destroy();
+    }
+    StairConstructionActors.Empty();
+    for (const FStairsSaveData& Stair : ConstructedStairs)
+    {
+        FActorSpawnParameters SpawnParams;
+        AStaircaseActor* NewActor = GetWorld()->SpawnActor<AStaircaseActor>(
+            AStaircaseActor::StaticClass(),
+            Stair.StairTransform.GetLocation(),
+            Stair.StairTransform.GetRotation().Rotator(),
+            SpawnParams
+        );
+        NewActor->SetNumberOfStairs(Stair.NumberOfStairs);
+        NewActor->SetWidth(Stair.StairsWidth);
+        NewActor->SetLength(Stair.StairsLength);
+        NewActor->SetDepth(Stair.StairsDepth);
+        NewActor->SetStairType(Stair.StairType);
+
+        StairConstructionActors.Add(NewActor);
+
     }
 }
 

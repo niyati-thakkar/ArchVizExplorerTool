@@ -35,7 +35,7 @@ void AArchVizPlayerController::BeginPlay()
 
 void AArchVizPlayerController::Save()
 {
-    SaveLoadManager->SaveSlot(RoadManager->RoadConstructionActors, ConstructionManager->WallActors, ConstructionManager->SlabActors);
+    SaveLoadManager->SaveSlot(RoadManager->RoadConstructionActors, ConstructionManager->WallActors, ConstructionManager->SlabActors, ExteriorManager->SpawnedStairs);
 }
 
 AArchVizPlayerController::AArchVizPlayerController()
@@ -181,7 +181,7 @@ EArchVizMode AArchVizPlayerController::GetCurrentMode()
 
 void AArchVizPlayerController::Load()
 {
-    SaveLoadManager->LoadSlot(RoadManager->RoadConstructionActors, ConstructionManager->WallActors, ConstructionManager->SlabActors);
+    SaveLoadManager->LoadSlot(RoadManager->RoadConstructionActors, ConstructionManager->WallActors, ConstructionManager->SlabActors, ExteriorManager->SpawnedStairs);
 }
 
 void AArchVizPlayerController::Tick(float DeltaTime)

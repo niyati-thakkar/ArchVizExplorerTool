@@ -35,6 +35,32 @@ public:
 };
 
 USTRUCT(BlueprintType)
+struct FStairsSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform StairTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EStairType StairType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NumberOfStairs;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StairsLength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StairsDepth;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StairsWidth;
+
+};
+
+
+USTRUCT(BlueprintType)
 struct FStairs_DA
 {
 	GENERATED_BODY()
