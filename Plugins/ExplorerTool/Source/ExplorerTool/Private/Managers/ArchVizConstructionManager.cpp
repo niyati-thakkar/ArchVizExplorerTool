@@ -77,8 +77,9 @@ void UArchVizConstructionManager::End()
 		{
 			CurrentActor->Destroy();
 			CurrentActor->SetIsMoving(false);
-			CurrentActor = nullptr;
+			
 		}
+		CurrentActor = nullptr;
 		
 	}
 	
