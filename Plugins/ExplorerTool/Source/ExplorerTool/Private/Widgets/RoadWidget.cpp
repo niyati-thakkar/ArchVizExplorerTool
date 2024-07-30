@@ -83,6 +83,17 @@ void URoadWidget::HandleUndoButtonClicked()
 		PlayerController->RoadManager->RemoveLastSplinePoint();
 	}
 }
+void URoadWidget::UpdateMode(ERoadState roadState)
+{
+	for (FRoadState RoadState : DataAsset->RoadStates)
+	{
+		if (RoadState.RoadState == (roadState))
+		{
+			RoadState_SB->SetButtonSelected(RoadState.RoadStateName);
+			break;
+		}
+	}
+}
 
 void URoadWidget::HandleDeleteButtonClicked()
 {
@@ -202,4 +213,25 @@ void URoadWidget::UpdateWidth()
 	{
 		PlayerController->RoadManager->ChangeRoadWidth(RoadWidthSpinBox->GetValue());
 	}
+}
+
+void URoadWidget::UpdatePropertiesSelected(UMaterialInterface* RoadMaterial, ERoadType Road, float RoadWidth)
+{
+	for (FRoadMaterial roadMaterial : DataAsset->RoadMaterials)
+	{
+		if ((roadMaterial.RoadMaterial) == (RoadMaterial))
+		{
+			RoadMaterial_SB->SetButtonSelected(roadMaterial.RoadMaterialName);
+			break;
+		}
+	}
+	for (FRoadType RoadType : DataAsset->RoadTypes)
+	{
+		if (RoadType.RoadType == (Road))
+		{
+			RoadType_SB->SetButtonSelected(RoadType.RoadTypeName);
+			break;
+		}
+	}
+	RoadWidthSpinBox->SetValue(RoadWidth);
 }

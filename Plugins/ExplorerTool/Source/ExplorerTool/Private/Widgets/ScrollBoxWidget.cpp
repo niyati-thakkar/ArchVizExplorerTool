@@ -65,28 +65,17 @@ void UScrollBoxWidget::AddScrollBoxElement(FText ElementName, UTexture2D* Elemen
 }
 void UScrollBoxWidget::SetButtonSelected(FText ButtonText)
 {
-	if(ButtonText.IsEmptyOrWhitespace())
+	
+	for (UScrollBoxElementWidget* ele : ScrollBoxButtons)
 	{
-		if(SelectedButton)
+		if (ele->GetButtonText().EqualTo(ButtonText))
 		{
-			SelectedButton->SetButtonNormal();
-			SelectedButton = nullptr;
-		}
-		
-		return;
-	}
-	for(UScrollBoxElementWidget* ele: ScrollBoxButtons)
-	{
-		if(ele->GetButtonText().EqualTo(ButtonText))
-		{
-			if(SelectedButton == ele)
+			if (SelectedButton == ele)
 			{
-				SelectedButton->SetButtonNormal();
-				SelectedButton = nullptr;
 				return;
 			}
 			ele->SetButtonSelected();
-			if(SelectedButton)
+			if (SelectedButton)
 			{
 				SelectedButton->SetButtonNormal();
 			}
@@ -94,4 +83,13 @@ void UScrollBoxWidget::SetButtonSelected(FText ButtonText)
 			return;
 		}
 	}
+}
+void UScrollBoxWidget::RemoveSelection()
+{
+	if (SelectedButton)
+	{
+		SelectedButton->SetButtonNormal();
+		SelectedButton = nullptr;
+	}
+
 }

@@ -103,7 +103,7 @@ void AArchVizWallActor::SpawnWall()
     FVector MidPoint = (StartPoint + EndPoint) / 2.0f;
     SetActorLocation(MidPoint);
 
-    for (int i = 0; i < NumberOfWalls; ++i)
+    for (int i = 0; i < NumberOfWalls-1; ++i)
     {
         FVector SpawnLocation = StartPoint + RoundedDirection * i * 400.0f;
 
@@ -158,7 +158,7 @@ void AArchVizWallActor::SpawnMesh(FVector SpawnLocation)
         NewWall->RegisterComponent();
         NewWall->SetVisibility(true);
         if(Material)
-        {
+        {   
             NewWall->SetMaterial(0,Material);
         }
         SpawnedWalls.Add(NewWall);

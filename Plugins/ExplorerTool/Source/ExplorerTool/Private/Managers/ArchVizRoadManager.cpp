@@ -4,6 +4,8 @@
 
 #include "Managers/ArchVizRoadManager.h"
 
+#include "Widgets/ArchVizMasterWidget.h"
+
 
 //UArchVizRoadManager::UArchVizRoadManager()
 //{
@@ -15,14 +17,16 @@
 
 void UArchVizRoadManager::SetUp()
 {
-	
-    ChangeRoadState(ERoadState::StartRoad);
     RoadWidget = nullptr;
     CurrentSelectedActor = nullptr;
 }
 
 void UArchVizRoadManager::End()
 {
+    if(CurrentSelectedActor)
+    {
+        CurrentSelectedActor->UnhighlightDeselectedActor();
+    }
     CurrentSelectedActor = nullptr;
 }
 void UArchVizRoadManager::ChangeRoadType(ERoadType RoadType)
@@ -47,6 +51,7 @@ void UArchVizRoadManager::ChangeRoadState(ERoadState RoadState)
         }
     }
     CurrentRoadState = RoadState;
+    UpdateRoadStateUI();
 }
 
 void UArchVizRoadManager::ChangeRoadWidth(int RoadWidth)
@@ -59,6 +64,7 @@ void UArchVizRoadManager::ChangeRoadWidth(int RoadWidth)
             RoadActor->UpdateRoadMeshes();
         }
     }
+
 }
 
 void UArchVizRoadManager::ChangeRoadMaterial(UMaterialInterface* NewMaterial)
@@ -99,30 +105,50 @@ void UArchVizRoadManager::RemoveLastSplinePoint()
 }
 void UArchVizRoadManager::MouseClicked(FHitResult HitResult)
 {
-    if (CurrentRoadState == ERoadState::StartRoad)
+    if(CurrentRoadState == ERoadState::EndRoad)
+    {
+        ChangeRoadState(ERoadState::StartRoad);
+    }
+    else if (CurrentRoadState == ERoadState::StartRoad)
     {
         CurrentSelectedActor = GetWorld()->SpawnActor<AArchVizRoadActor>();
         CurrentSelectedActor->AddRoadPoint(HitResult.Location);
+       // CurrentSelectedActor->RoadMaterial = 
         RoadConstructionActors.Add(CurrentSelectedActor);
         ChangeRoadState(ERoadState::ExistingRoad);
+
     }else
     {
         if (AArchVizRoadActor* Actor = Cast<AArchVizRoadActor>(HitResult.GetActor())) {
             CurrentSelectedActor = Actor;
-            ChangeRoadState(ERoadState::ExistingRoad);
         }
         else if (CurrentSelectedActor && CurrentRoadState == ERoadState::ExistingRoad) {
             CurrentSelectedActor->AddRoadPoint(HitResult.Location);
+            
         }
+        ChangeRoadState(ERoadState::ExistingRoad);
     }
-
-    
-    
-    
+    UpdateRoadPropertiesUI();
 }
 
 
 void UArchVizRoadManager::Start()
 {
     ChangeRoadState(ERoadState::StartRoad);
+}
+
+void UArchVizRoadManager::UpdateRoadStateUI()
+{
+    if(RoadWidget)
+    {
+        RoadWidget->UpdateMode(CurrentRoadState);
+    }
+            
+}
+void UArchVizRoadManager::UpdateRoadPropertiesUI()
+{
+	if(CurrentSelectedActor)
+	{
+        RoadWidget->UpdatePropertiesSelected(CurrentSelectedActor->RoadMaterial, CurrentSelectedActor->RoadType,CurrentSelectedActor->RoadWidth);
+	}
 }

@@ -126,12 +126,14 @@ public:
 	void HandleNumberOfStairsChanged(float Value);
 	UFUNCTION(BlueprintCallable)
 	void HandleStairsTypeChanged(FText ElementText);
+	void SetExistingValues(float length, float width, float depth, int stepsCount, EStairType StairsType);
 	UFUNCTION(BlueprintCallable)
 	void HandleDeleteButtonClicked();
 
 
 	UFUNCTION(BlueprintCallable)
 	void PopulateScrollBoxes();
+	void RemoveStairTypeSelection();
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

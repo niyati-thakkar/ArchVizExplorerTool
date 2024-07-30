@@ -8,6 +8,7 @@
 #include "Managers/ArchVizManager.h"
 #include "ArchVizExteriorManager.generated.h"
 
+class UExteriorWidget;
 /**
  * 
  */
@@ -26,6 +27,8 @@ public:
 	void SetUp();
 	void DeleteStairs();
 	void ApplyRotation(FRotator InRotation = FRotator::ZeroRotator) override;
+	void UpdateWidgetValues();
 	AStaircaseActor* CurrentSelectedActor;
+	UExteriorWidget* ExteriorWidget;
 	TArray<AStaircaseActor*> SpawnedStairs;
 };

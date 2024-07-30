@@ -26,7 +26,7 @@ AArchVizRoadActor::AArchVizRoadActor()
     }
 
     // Load the material
-    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialAsset(TEXT("/ExplorerTool/Materials/TwoYellowLines.TwoYellowLines"));
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialAsset(TEXT("/ExplorerTool/RoadConstruction/TwoYellowLines.TwoYellowLines"));
     if (MaterialAsset.Succeeded())
     {
         RoadMaterial = MaterialAsset.Object;
@@ -173,7 +173,7 @@ void AArchVizRoadActor::UpdateRoadMeshes()
         MeshComponent->RegisterComponent();
         MeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true); // 'true' ensures tangents are mirrored correctly
         MeshComponent->SetForwardAxis(ESplineMeshAxis::X);
-        MeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepRelativeTransform);
+        MeshComponent->AttachToComponent(SplineComponent, FAttachmentTransformRules::KeepWorldTransform);
         MeshComponent->SetStartScale(Scale);
         MeshComponent->SetEndScale(Scale);
         // Optionally set the up vector to prevent twisting
@@ -183,8 +183,6 @@ void AArchVizRoadActor::UpdateRoadMeshes()
 
         // Set collision profile to use simple collision as complex
         MeshComponent->SetCollisionProfileName(UCollisionProfile::BlockAllDynamic_ProfileName);
-
-
 
         SplineMeshes.Add(MeshComponent);
     }

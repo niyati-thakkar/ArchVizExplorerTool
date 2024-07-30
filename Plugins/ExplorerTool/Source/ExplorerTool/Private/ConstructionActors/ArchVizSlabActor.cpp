@@ -73,28 +73,48 @@ void AArchVizSlabActor::AddEndPoint(FVector EP)
 
 void AArchVizSlabActor::SpawnSlabs()
 {
-    // Calculate dimensions based on start and end points
-    SlabSizeX = (EndPoint.X - StartPoint.X);
-    SlabSizeY = (EndPoint.Y - StartPoint.Y);
-	/*float SlabSizeX = 100;
-    float SlabSizeY = 100;*/
+    // Calculate distances between start and end points
+    float XDistance = EndPoint.X - StartPoint.X;
+    float YDistance = EndPoint.Y - StartPoint.Y;
 
-    FVector SpawnLocation = StartPoint; // Center point for spawning
+    // Calculate dimensions based on absolute values of distances
+    SlabSizeX = FMath::Abs(XDistance);
+    SlabSizeY = FMath::Abs(YDistance);
+
+    // Determine the correct rotation and dimension adjustment
+    if (XDistance >= 0.0f && YDistance >= 0.0f) {
+        SetActorRotation(FRotator(0, 0, 0));
+    }
+    else if (XDistance >= 0.0f && YDistance < 0.0f) {
+        SetActorRotation(FRotator(0, 270, 0));
+        std::swap(SlabSizeX, SlabSizeY);
+    }
+    else if (XDistance < 0.0f && YDistance >= 0.0f) {
+        SetActorRotation(FRotator(0, 90, 0));
+        std::swap(SlabSizeX, SlabSizeY);
+    }
+    else {
+        SetActorRotation(FRotator(0, 180, 0));
+    }
+
+    // Calculate the spawn location based on the adjusted StartPoint
+    FVector SpawnLocation = StartPoint;
     SpawnLocation.Z = StartPoint.Z;
+
     // Ensure ProceduralSlabMesh is valid before using it
     if (ProceduralSlabMesh)
     {
         // Clear any previous mesh data
         ProceduralSlabMesh->ClearAllMeshSections();
 
-        // Generate the floor mesh
+        // Generate the slab mesh
         GenerateSlab();
 
         // Set the location of the mesh
         ProceduralSlabMesh->SetWorldLocation(SpawnLocation);
-
     }
 }
+
 void AArchVizSlabActor::BuildQuad(TArray<FVector>& InVertices, TArray<int32>& InTriangles, TArray<FVector>& InNormals, TArray<FProcMeshTangent>& InTangents, TArray<FVector2D>& InTexCoords, const FVector BottomLeft, const FVector BottomRight, const FVector TopRight, const FVector TopLeft, int32& VertexOffset, int32& TriangleOffset, const FVector Normal, const FProcMeshTangent Tangent)
 {
     const int32 Index1 = VertexOffset++;

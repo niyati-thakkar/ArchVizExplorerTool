@@ -51,6 +51,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddScrollBoxElement(FText ElementName, UTexture2D* ElementIcon);
 	void SetButtonSelected(FText ButtonText);
+	void RemoveSelection();
 
 	UFUNCTION(BlueprintCallable)
 	void OnElementClicked(FText ElementText);

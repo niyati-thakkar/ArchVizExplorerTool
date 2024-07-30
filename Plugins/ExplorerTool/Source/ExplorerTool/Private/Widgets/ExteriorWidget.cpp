@@ -99,7 +99,23 @@ void UExteriorWidget::HandleStairsTypeChanged(FText ElementText)
 	}
 
 }
+void UExteriorWidget::SetExistingValues(float length, float width, float depth, int stepsCount, EStairType StairsType)
+{
+	StairsWidthSpinBox->SetValue(width);
+	StairsDepthSpinBox->SetValue(depth);
+	StairsLengthSpinBox->SetValue(length);
+	NumberOfStairsSpinBox->SetValue(stepsCount);
+	for (FStairs_DA StairType : DataAsset->StairsTypes)
+	{
+		if (StairType.StairType == (StairsType))
+		{
+			StairsType_SB->SetButtonSelected(StairType.StairName);
+			break;
+		}
+	}
+	
 
+}
 void UExteriorWidget::HandleDeleteButtonClicked()
 {
 	// Handle the delete button click event
@@ -163,4 +179,9 @@ void UExteriorWidget::PopulateScrollBoxes()
 	// Bind element click events
 	StairsType_SB->ElementSelected.BindUObject(this, &UExteriorWidget::HandleStairsTypeChanged);
 
+}
+
+void UExteriorWidget::RemoveStairTypeSelection()
+{
+	StairsType_SB->RemoveSelection();
 }

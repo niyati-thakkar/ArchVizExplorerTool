@@ -5,6 +5,7 @@
 
 #include "ArchVizEnums.h"
 #include "Game/ArchVizPlayerController.h"
+#include "Widgets/ArchVizMasterWidget.h"
 
 void UArchVizExteriorManager::ChangeStairsWidth(float GetValue)
 {
@@ -50,8 +51,9 @@ void UArchVizExteriorManager::ChangeStairsType(EStairType StairType)
         SpawnedStairs.Add(CurrentSelectedActor);
         CurrentSelectedActor->SetIsMoving(true);
     }
+
     CurrentSelectedActor->SetStairType(StairType);
-    
+    CurrentSelectedActor->HighlightSelectedActor();  
     
     
 }
@@ -60,7 +62,6 @@ void UArchVizExteriorManager::MouseClicked(FHitResult HitResult)
 
     if (CurrentSelectedActor)
     {
-        
         CurrentSelectedActor->UnhighlightDeselectedActor();
         if (!CurrentSelectedActor->GetIsMoving())
         {
@@ -75,6 +76,7 @@ void UArchVizExteriorManager::MouseClicked(FHitResult HitResult)
                 if (CurrentSelectedActor)
                 {
                     CurrentSelectedActor->HighlightSelectedActor();
+                    
                 }
             }
 
@@ -94,19 +96,27 @@ void UArchVizExteriorManager::MouseClicked(FHitResult HitResult)
         CurrentSelectedActor = Cast<AStaircaseActor>(HitResult.GetActor());
         if (CurrentSelectedActor)
         {
-            
-            CurrentSelectedActor->HighlightSelectedActor();
+            if (CurrentSelectedActor)
+            {
+            	CurrentSelectedActor->HighlightSelectedActor();
+            }
         }
     }
+    UpdateWidgetValues();
 }
 
 void UArchVizExteriorManager::End()
 {
+    if(CurrentSelectedActor)
+    {
+        CurrentSelectedActor->UnhighlightDeselectedActor();
+    }
     CurrentSelectedActor = nullptr;
 }
 void UArchVizExteriorManager::SetUp()
 {
     CurrentSelectedActor = nullptr;
+    ExteriorWidget = nullptr;
 }
 
 void UArchVizExteriorManager::DeleteStairs()
@@ -122,4 +132,23 @@ void UArchVizExteriorManager::DeleteStairs()
 void UArchVizExteriorManager::ApplyRotation(FRotator InRotation)
 {
     CurrentSelectedActor->RotateActor(InRotation);
+}
+void UArchVizExteriorManager::UpdateWidgetValues()
+{
+    if (ExteriorWidget && CurrentSelectedActor)
+    {
+        ExteriorWidget->SetExistingValues(
+            CurrentSelectedActor->GetLength(),
+            CurrentSelectedActor->GetWidth(),
+            CurrentSelectedActor->GetDepth(),
+            CurrentSelectedActor->GetNumberOfStairs(), CurrentSelectedActor->GetStairType()
+        );
+    }else
+    {
+	    if(ExteriorWidget)
+	    {
+            ExteriorWidget->RemoveStairTypeSelection();
+	    }
+    }
+    
 }

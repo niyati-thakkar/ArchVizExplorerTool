@@ -29,7 +29,9 @@ void AArchVizPlayerController::BeginPlay()
     if(UArchVizMasterWidget* DisplayWidget = Cast<UArchVizMasterWidget>(MasterWidget))
     {
         RoadManager->RoadWidget = DisplayWidget->RoadModeWidget;
+        ExteriorManager->ExteriorWidget = DisplayWidget->ExteriorModeWidget;
     }
+    RoadManager->Start();
     //RoadManager->RoadWidget = MasterWidget->RoadWidget;
 }
 

@@ -24,7 +24,7 @@ class EXPLORERTOOL_API AArchVizConstructionActor : public AArchVizActor
 public:
 	AArchVizConstructionActor();
 	const int32 GridSize = 1000;
-	const int32 GridCellSize = 200;
+	const int32 GridCellSize = 400;
 	virtual bool GetIsMoving();
 	virtual bool GetIsConstructed();
 	virtual void SetIsMoving(bool isMoving);

@@ -9,6 +9,7 @@
 #include "UMG/Public/Components/Image.h"
 #include "UMG/Public/Components/SizeBox.h"
 #include "ArchVizUserWidget.h"
+#include "RoadActors/ArchVizRoadActor.h"
 #include "UMG/Public/Components/SpinBox.h"
 #include "UMG/Public/Components/TextBlock.h"
 #include "UMG/Public/Components/VerticalBox.h"
@@ -120,6 +121,7 @@ public:
 	virtual bool Initialize() override;
 	UFUNCTION(BlueprintCallable)
 	void HandleUndoButtonClicked();
+	void UpdateMode(ERoadState roadState);
 	UFUNCTION(BlueprintCallable)
 	void HandleDeleteButtonClicked();
 	UFUNCTION(BlueprintCallable)
@@ -137,6 +139,7 @@ public:
 	void PopulateScrollBoxes();
 	UFUNCTION(BlueprintCallable)
 	void UpdateWidth();
+	void UpdatePropertiesSelected(UMaterialInterface* RoadMaterial, ERoadType Road, float RoadWidth);
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	ERoadState CurrentRoadState = ERoadState::StartRoad;

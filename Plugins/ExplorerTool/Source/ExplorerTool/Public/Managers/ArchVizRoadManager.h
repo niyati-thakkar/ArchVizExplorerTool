@@ -22,6 +22,8 @@ public:
 	void End() override;
 	void MouseClicked(FHitResult HitResult) override;
 	void Start() override;
+	void UpdateRoadStateUI();
+	void UpdateRoadPropertiesUI();
 	UFUNCTION(BlueprintCallable)
 	void ChangeRoadType(ERoadType RoadType);
 	UFUNCTION(BlueprintCallable)
