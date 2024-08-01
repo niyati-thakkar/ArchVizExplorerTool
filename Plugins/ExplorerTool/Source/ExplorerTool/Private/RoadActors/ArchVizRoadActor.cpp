@@ -168,8 +168,9 @@ void AArchVizRoadActor::UpdateRoadMeshes()
 
         FVector2D Scale = FVector2D(RoadWidth / 100, 1.0f);
         USplineMeshComponent* MeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
+        RoadMesh->SetMaterial(0, RoadMaterial);
         MeshComponent->SetStaticMesh(RoadMesh);
-        MeshComponent->SetMaterial(0, RoadMaterial);
+        //MeshComponent->SetMaterial(0, RoadMaterial);
         MeshComponent->RegisterComponent();
         MeshComponent->SetStartAndEnd(StartPos, StartTangent, EndPos, EndTangent, true); // 'true' ensures tangents are mirrored correctly
         MeshComponent->SetForwardAxis(ESplineMeshAxis::X);

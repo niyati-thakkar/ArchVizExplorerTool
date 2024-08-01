@@ -5,6 +5,7 @@
 #include "Game/ArchVizPlayerController.h"
 #include "ConstructionActors/ArchVizSlabActor.h"
 #include "ConstructionActors/ArchVizWallActor.h"
+#include "Widgets/InteriorWidget.h"
 
 void UArchVizInteriorManager::SetUp()
 {
@@ -13,11 +14,16 @@ void UArchVizInteriorManager::SetUp()
 
 void UArchVizInteriorManager::End()
 {
+    if(InteriorWidget)
+    {
+	    InteriorWidget->ClearSelection();
+    }
     if (CurrentActor != nullptr)
     {
+        //InteriorActors.Remove(CurrentActor);
         CurrentActor->SetIsMoving(false);
-        CurrentActor = nullptr;
         CurrentActor->UnhighlightDeselectedActor();
+        CurrentActor = nullptr;
     }
 }
 
@@ -45,34 +51,7 @@ void UArchVizInteriorManager::MouseClicked(FHitResult HitResult)
         }else 
         {
             HitResult = Cast<AArchVizPlayerController>(GetWorld()->GetFirstPlayerController())->GetMouseLocation({ CurrentActor });
-            bool bCanPlace = false;
-
-            switch (CurrentActor->GetComponentType())
-            {
-            case EInteriorItemType::WallPlaceable:
-                bCanPlace = Cast<AArchVizWallActor>(HitResult.GetActor()) != nullptr;
-                break;
-            case EInteriorItemType::FloorPlaceable:
-                bCanPlace = Cast<AArchVizSlabActor>(HitResult.GetActor()) != nullptr && HitResult.ImpactNormal.Z > 0;
-                break;
-            case EInteriorItemType::CeilingPlaceable:
-                bCanPlace = Cast<AArchVizSlabActor>(HitResult.GetActor()) != nullptr && HitResult.ImpactNormal.Z < 0;
-                break;
-            default:
-                break;
-            }
-
-            if (bCanPlace)
-            {
-                //HitResult.Location.Z = HitResult.GetActor()->GetActorLocation().Z;
-                CurrentActor->SetActorLocation(HitResult.Location);
-                //CurrentActor->SetActorRotation(HitResult.GetActor()->GetActorRotation());
-                CurrentActor->AdjustPositionForPlacement();
-                CurrentActor->SetIsMoving(false);
-                CurrentActor->AttachToActor(HitResult.GetActor(), FAttachmentTransformRules::KeepWorldTransform);
-                InteriorActors.Add(CurrentActor);
-                CurrentActor = nullptr;
-            }
+            PlaceActor(HitResult);
         }
         TArray<AActor*> array;
         HitResult.GetActor()->GetAttachedActors(array);
@@ -85,6 +64,7 @@ void UArchVizInteriorManager::MouseClicked(FHitResult HitResult)
             CurrentActor->HighlightSelectedActor();
         }
     }
+    UpdateUI();
 }
 
 void UArchVizInteriorManager::Start()
@@ -94,35 +74,50 @@ void UArchVizInteriorManager::Start()
 
 void UArchVizInteriorManager::AttachToCeiling(UStaticMesh* StaticMesh)
 {
+    
+    if (CurrentActor)
+    {
+        CurrentActor->UnhighlightDeselectedActor();
+    }
     AArchVizInteriorActor* InteriorActor = GetWorld()->SpawnActor<AArchVizInteriorActor>();
     if (InteriorActor)
     {
         CurrentActor = InteriorActor;
         CurrentActor->SetStaticMesh(StaticMesh, EInteriorItemType::CeilingPlaceable);
         CurrentActor->SetIsMoving(true);
+        InteriorActors.Add(InteriorActor);
     }
 }
 
 void UArchVizInteriorManager::PlaceOnFloor(UStaticMesh* StaticMesh)
 {
+    if (CurrentActor)
+    {
+        CurrentActor->UnhighlightDeselectedActor();
+    }
     AArchVizInteriorActor* InteriorActor = GetWorld()->SpawnActor<AArchVizInteriorActor>();
     if (InteriorActor)
     {
         CurrentActor = InteriorActor;
         CurrentActor->SetStaticMesh(StaticMesh, EInteriorItemType::FloorPlaceable);
         CurrentActor->SetIsMoving(true);
-        
+        InteriorActors.Add(InteriorActor);
     }
 }
 
 void UArchVizInteriorManager::PlaceOnWall(UStaticMesh* StaticMesh)
 {
+    if (CurrentActor)
+    {
+        CurrentActor->UnhighlightDeselectedActor();
+    }
     AArchVizInteriorActor* InteriorActor = GetWorld()->SpawnActor<AArchVizInteriorActor>();
     if (InteriorActor)
     {
         CurrentActor = InteriorActor;
         CurrentActor->SetStaticMesh(StaticMesh, EInteriorItemType::WallPlaceable);
         CurrentActor->SetIsMoving(true);
+        InteriorActors.Add(InteriorActor);
     }
 }
 
@@ -163,17 +158,13 @@ void UArchVizInteriorManager::PlaceActor(FHitResult HitResult)
         if (bCanPlace)
         {
             //HitResult.Location.Z = HitResult.GetActor()->GetActorLocation().Z;
-            CurrentActor->SetActorLocation(HitResult.Location);
+            //CurrentActor->SetActorRelativeLocation(HitResult.Location + CurrentActor->AdjustPositionForPlacement());
             //CurrentActor->SetActorRotation(HitResult.GetActor()->GetActorRotation());
-            CurrentActor->AdjustPositionForPlacement();
             CurrentActor->SetIsMoving(false);
             CurrentActor->AttachToActor(HitResult.GetActor(), FAttachmentTransformRules::KeepWorldTransform);
-            InteriorActors.Add(CurrentActor);
             CurrentActor = nullptr;
         }
     }
-    TArray<AActor*> array;
-    CurrentActor->GetParentActor()->GetAttachedActors(array);
 
 }
 
@@ -184,4 +175,36 @@ void UArchVizInteriorManager::ApplyRotation(FRotator InRotation)
     {
         CurrentActor->RotateActor();
     }
+}
+void UArchVizInteriorManager::UpdateUI()
+{
+    if(CurrentActor && InteriorWidget)
+    {
+	    switch(CurrentActor->ComponentType)
+	    {
+	    case EInteriorItemType::CeilingPlaceable:
+		    {
+            InteriorWidget->UpdateCeilElementSelected(CurrentActor->GetStaticMesh());
+            break;
+		    }
+	    
+        case EInteriorItemType::WallPlaceable:
+        {
+            InteriorWidget->UpdateWallElementSelected(CurrentActor->GetStaticMesh());
+            break;
+        }
+        case EInteriorItemType::FloorPlaceable:
+        {
+            InteriorWidget->UpdateFloorElementSelected(CurrentActor->GetStaticMesh());
+            break;
+        }
+        }
+    }else
+    {
+        if (InteriorWidget)
+        {
+            InteriorWidget->ClearSelection();
+        }
+    }
+	
 }

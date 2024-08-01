@@ -112,6 +112,15 @@ void UConstructionWidget::HandleDeleteButtonClicked()
 {
 	PlayerController->ConstructionManager->DeleteButtonClicked();
 }
+
+void UConstructionWidget::ClearSelected()
+{
+	FloorMaterial_SB->RemoveSelection();
+	RoofMaterial_SB->RemoveSelection();
+	WallMaterial_SB->RemoveSelection();
+	ConstructionElements_SB->RemoveSelection();
+}
+
 void UConstructionWidget::PopulateScrollBoxes()
 {
 	if (DataAsset)
@@ -160,4 +169,37 @@ void UConstructionWidget::PopulateScrollBoxes()
 	RoofMaterial_SB->ElementSelected.BindUObject(this, &UConstructionWidget::HandleRoofMaterialChange);
 	WallMaterial_SB->ElementSelected.BindUObject(this, &UConstructionWidget::HandleWallMaterialChange);
 	//RoadMaterial_SB->AddToViewport();
+}
+void UConstructionWidget::UpdatePropertiesSelected(UMaterialInterface* Material)
+{
+	ClearSelected();
+	for (FConstructionWallMaterial material : DataAsset->ConstructionWallMaterials)
+	{
+		if ((material.WallMaterial) == (Material))
+		{
+			WallMaterial_SB->SetButtonSelected(material.WallMaterialName);
+			break;
+		}
+	}
+}
+void UConstructionWidget::UpdatePropertiesSelected(UMaterialInterface* FloorMaterial, UMaterialInterface* RoofMaterial)
+{
+	
+	ClearSelected();
+	for (FConstructionFloorMaterial material : DataAsset->ConstructionFloorMaterials)
+	{
+		if ((material.FloorMaterial) == (FloorMaterial))
+		{
+			FloorMaterial_SB->SetButtonSelected(material.FloorMaterialName);
+			break;
+		}
+	}
+	for (FConstructionRoofMaterial material : DataAsset->ConstructionRoofMaterials)
+	{
+		if ((material.RoofMaterial) == (RoofMaterial))
+		{
+			RoofMaterial_SB->SetButtonSelected(material.RoofMaterialName);
+			break;
+		}
+	}
 }

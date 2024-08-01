@@ -88,6 +88,7 @@ public:
 	virtual void NativeConstruct() override;
 	UFUNCTION()
 	void HandleDeleteButtonClicked();
+	void ClearSelected();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTaskBarDataAsset* DataAsset;
 	virtual bool Initialize() override;
@@ -100,5 +101,7 @@ public:
 	void HandleRoofMaterialChange(FText Text);
 	UFUNCTION(BlueprintCallable)
 	void PopulateScrollBoxes();
+	void UpdatePropertiesSelected(UMaterialInterface* Material);
+	void UpdatePropertiesSelected(UMaterialInterface* FloorMaterial, UMaterialInterface* RoofMaterial);
 };
 

@@ -27,6 +27,10 @@ void UArchVizRoadManager::End()
     {
         CurrentSelectedActor->UnhighlightDeselectedActor();
     }
+    if (RoadWidget)
+    {
+        RoadWidget->ClearSelected();
+    }
     CurrentSelectedActor = nullptr;
 }
 void UArchVizRoadManager::ChangeRoadType(ERoadType RoadType)

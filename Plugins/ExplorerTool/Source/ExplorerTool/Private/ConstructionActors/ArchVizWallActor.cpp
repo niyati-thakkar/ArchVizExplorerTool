@@ -15,6 +15,12 @@ AArchVizWallActor::AArchVizWallActor()
     {
         WallMesh = WallMeshAsset.Object;
     }
+    // Load the material
+    static ConstructorHelpers::FObjectFinder<UMaterialInterface> MaterialAsset(TEXT("/Game/StarterContent/Materials/M_Basic_Wall.M_Basic_Wall"));
+    if (MaterialAsset.Succeeded())
+    {
+        Material = MaterialAsset.Object;
+    }
     StartPoint = FVector(0);
     EndPoint = FVector(0);
     Rotation = FRotator::ZeroRotator;
@@ -275,7 +281,7 @@ void AArchVizWallActor::RotateActor(FRotator InRotation)
     }
 
     FRotator newRotation = FRotator(currentRotation.Pitch, newYaw, currentRotation.Roll);
-
+    Rotation = newRotation;
     SetActorRotation(newRotation);
 }
 

@@ -286,7 +286,7 @@ void UArchVizSaveLoadManager::LoadWall(TArray<AArchVizWallActor*>& WallConstruct
             FActorSpawnParameters SpawnParams;
 
             AArchVizInteriorActor* InteriorActor = GetWorld()->SpawnActor<AArchVizInteriorActor>(AArchVizInteriorActor::StaticClass(), ActorTransform, SpawnParams);
-            UStaticMesh* StaticMesh = Cast<UStaticMesh>(StaticLoadObject(UMaterialInterface::StaticClass(), nullptr, *Wall.AttachedActors[i].StaticMesh));
+            UStaticMesh* StaticMesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *Wall.AttachedActors[i].StaticMesh));
             InteriorActor->SetStaticMesh(StaticMesh, Wall.AttachedActors[i].InteriorType);
             InteriorActor->AttachToActor(NewWall, FAttachmentTransformRules::KeepWorldTransform);
         }
@@ -350,7 +350,7 @@ void UArchVizSaveLoadManager::LoadSlab(TArray<AArchVizSlabActor*>& SlabConstruct
             AArchVizInteriorActor* InteriorActor = GetWorld()->SpawnActor<AArchVizInteriorActor>(AArchVizInteriorActor::StaticClass(), ActorTransform, SpawnParams);
             UStaticMesh* StaticMesh = Cast<UStaticMesh>(StaticLoadObject(UStaticMesh::StaticClass(), nullptr, *Slab.AttachedActors[i].StaticMesh));
             InteriorActor->SetStaticMesh(StaticMesh, Slab.AttachedActors[i].InteriorType);
-            InteriorActor->AttachToActor(NewSlab, FAttachmentTransformRules::KeepRelativeTransform);
+            InteriorActor->AttachToActor(NewSlab, FAttachmentTransformRules::KeepWorldTransform);
         }
         SlabConstructionActors.Add(NewSlab);
 

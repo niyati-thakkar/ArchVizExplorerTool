@@ -116,7 +116,7 @@ void UArchVizMasterWidget::ChangeToExteriorMode()
         PlayerController->ChangeMode(EArchVizMode::ExteriorMode);
         WidgetSwitcher->SetActiveWidget(ExteriorModeWidget);
         WidgetSwitcher->SetVisibility(ESlateVisibility::Visible);
-        SaveLoadModeButton->Button->SetStyle(ButtonStyleClicked);
+        ExteriorModeButton->Button->SetStyle(ButtonStyleClicked);
     }
 }
 

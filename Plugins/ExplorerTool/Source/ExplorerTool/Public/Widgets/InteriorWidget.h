@@ -90,7 +90,10 @@ public:
 	UFUNCTION()
 	void HandleCeilingItemClicked(FText Text);
 	void HandleWallItemClicked(FText Text);
+	void UpdateFloorElementSelected(UStaticMesh* mesh);
+	void UpdateWallElementSelected(UStaticMesh* mesh);
+	void UpdateCeilElementSelected(UStaticMesh* mesh);
 	UFUNCTION(BlueprintCallable)
 	void PopulateScrollBoxes();
-
+	void ClearSelection();
 };

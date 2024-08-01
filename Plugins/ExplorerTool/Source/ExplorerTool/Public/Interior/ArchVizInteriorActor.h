@@ -38,7 +38,6 @@ public:
 	EInteriorItemType ComponentType;
 	AArchVizPlayerController* PlayerController;
 	void SetStaticMesh(UStaticMesh* StaticMesh, EInteriorItemType ItemType);
-	void AdjustPositionForPlacement();
 	void RotateActor(FRotator ApplyRotation = FRotator(0, 90, 0)) override;
 	EInteriorItemType GetComponentType();
 	bool IsRotateable() override;

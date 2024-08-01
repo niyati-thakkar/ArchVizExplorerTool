@@ -111,6 +111,10 @@ void UArchVizExteriorManager::End()
     {
         CurrentSelectedActor->UnhighlightDeselectedActor();
     }
+    if (ExteriorWidget)
+    {
+        ExteriorWidget->RemoveStairTypeSelection();
+    }
     CurrentSelectedActor = nullptr;
 }
 void UArchVizExteriorManager::SetUp()

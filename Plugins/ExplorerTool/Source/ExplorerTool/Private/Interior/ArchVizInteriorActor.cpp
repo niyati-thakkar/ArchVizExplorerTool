@@ -23,26 +23,56 @@ void AArchVizInteriorActor::Tick(float DeltaSeconds)
     {
         // Temporarily disable collision
         SetActorEnableCollision(false);
-        FHitResult HitResult = PlayerController->GetMouseLocation({ this });
-        
-        
-        if(AArchVizConstructionActor* Actor = Cast<AArchVizConstructionActor>(HitResult.GetActor()))
-        {
-	        
-            if (ComponentType == EInteriorItemType::WallPlaceable && Actor->IsA(AArchVizWallActor::StaticClass()))
-            {
-                SetActorRotation(Cast<AArchVizWallActor>(Actor)->GetRotation());
-            }
 
+        FHitResult HitResult;
+        PlayerController->GetHitResultUnderCursor(ECC_Visibility, true, HitResult);
+
+        if (AArchVizWallActor* Actor = Cast<AArchVizWallActor>(HitResult.GetActor()))
+        {
+            if (ComponentType == EInteriorItemType::WallPlaceable)
+            {
+                // Calculate wall normal
+                FVector WallNormal = HitResult.Normal;
+
+                // Determine if the wall normal is facing inward or outward
+                /*if (FVector::DotProduct(WallNormal, Actor->GetActorForwardVector()) > 0)
+                {
+                    WallNormal = -WallNormal;
+                }*/
+                //GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Yellow, FString::Printf(TEXT("HitResult.Normal: %s"), *WallNormal.ToString()));
+
+                // Calculate object rotation based on wall normal
+                FRotator ObjectRotation = WallNormal.Rotation();
+                ObjectRotation.Pitch = 0;  // Ensure the object is not tilted
+
+                //// Adjust rotation by 90 degrees to align the front of the actor with the wall
+                ObjectRotation.Yaw -= 90.0f;
+                if (ObjectRotation.Yaw < 0)
+                {
+                    ObjectRotation.Yaw += 360.0;
+                }
+                SetActorRotation(ObjectRotation);
+
+                
+                FVector WallLocation = HitResult.Location;
+
+                SetActorLocation(WallLocation);
+            }
+            else
+            {
+                SetActorLocation(HitResult.Location);
+            }
         }
-        
-        SetActorRelativeLocation(HitResult.Location);
-        AdjustPositionForPlacement();
+        else
+        {
+            SetActorLocation(HitResult.Location);
+        }
 
         // Re-enable collision
         SetActorEnableCollision(true);
     }
 }
+
 EInteriorItemType AArchVizInteriorActor::GetComponentType()
 {
     return ComponentType;
@@ -65,21 +95,7 @@ void AArchVizInteriorActor::SetStaticMesh(UStaticMesh* StaticMesh, EInteriorItem
     ComponentType = ItemType;
 }
 
-void AArchVizInteriorActor::AdjustPositionForPlacement()
-{
-    FVector Origin;
-    FVector BoxExtent;
-    GetActorBounds(false, Origin, BoxExtent);
 
-    FVector Adjustment = FVector::ZeroVector;
-
-  
-    if (ComponentType == EInteriorItemType::FloorPlaceable) {
-        Adjustment.Z = BoxExtent.Z;
-    }
-
-    SetActorLocation(GetActorLocation() + Adjustment);
-}
 
 void AArchVizInteriorActor::RotateActor(FRotator ApplyRotation)
 {

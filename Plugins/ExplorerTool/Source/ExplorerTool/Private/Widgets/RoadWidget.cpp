@@ -207,13 +207,6 @@ void URoadWidget::PopulateScrollBoxes()
 	
 
 }
-void URoadWidget::UpdateWidth()
-{
-	if(PlayerController)
-	{
-		PlayerController->RoadManager->ChangeRoadWidth(RoadWidthSpinBox->GetValue());
-	}
-}
 
 void URoadWidget::UpdatePropertiesSelected(UMaterialInterface* RoadMaterial, ERoadType Road, float RoadWidth)
 {
@@ -234,4 +227,10 @@ void URoadWidget::UpdatePropertiesSelected(UMaterialInterface* RoadMaterial, ERo
 		}
 	}
 	RoadWidthSpinBox->SetValue(RoadWidth);
+}
+void URoadWidget::ClearSelected()
+{
+	RoadType_SB->RemoveSelection();
+	RoadState_SB->RemoveSelection();
+	RoadMaterial_SB->RemoveSelection();
 }

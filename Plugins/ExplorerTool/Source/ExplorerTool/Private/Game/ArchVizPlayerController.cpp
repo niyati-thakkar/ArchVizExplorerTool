@@ -30,6 +30,8 @@ void AArchVizPlayerController::BeginPlay()
     {
         RoadManager->RoadWidget = DisplayWidget->RoadModeWidget;
         ExteriorManager->ExteriorWidget = DisplayWidget->ExteriorModeWidget;
+        InteriorManager->InteriorWidget = DisplayWidget->InteriorModeWidget;
+        ConstructionManager->ConstructionWidget = DisplayWidget->ConstructionModeWidget;
     }
     RoadManager->Start();
     //RoadManager->RoadWidget = MasterWidget->RoadWidget;
@@ -64,14 +66,18 @@ void AArchVizPlayerController::AddMappings()
 
         IMC->MapKey(RotationAction, EKeys::R);
         EIC->BindAction(RotationAction, ETriggerEvent::Completed, this, &AArchVizPlayerController::ApplyRotation);
-        UInputAction* SaveAction = NewObject<UInputAction>();
-        UInputAction* LoadAction = NewObject<UInputAction>();
+        /*UInputAction* SaveAction = NewObject<UInputAction>();
+        UInputAction* LoadAction = NewObject<UInputAction>();*/
 
-        IMC->MapKey(SaveAction, EKeys::S);
+        /*IMC->MapKey(SaveAction, EKeys::S);
         IMC->MapKey(LoadAction, EKeys::L);
 
         EIC->BindAction(SaveAction, ETriggerEvent::Completed, this, &AArchVizPlayerController::Save);
-        EIC->BindAction(LoadAction, ETriggerEvent::Completed, this, &AArchVizPlayerController::Load);
+        EIC->BindAction(LoadAction, ETriggerEvent::Completed, this, &AArchVizPlayerController::Load);*/
+
+        UInputAction* DeleteAction = NewObject<UInputAction>();
+        IMC->MapKey(DeleteAction, EKeys::Delete);
+
 
         const auto LocalPlayer = GetLocalPlayer();
         if (LocalPlayer)

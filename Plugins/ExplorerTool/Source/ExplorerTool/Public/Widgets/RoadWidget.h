@@ -138,8 +138,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PopulateScrollBoxes();
 	UFUNCTION(BlueprintCallable)
-	void UpdateWidth();
 	void UpdatePropertiesSelected(UMaterialInterface* RoadMaterial, ERoadType Road, float RoadWidth);
+	void ClearSelected();
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	ERoadState CurrentRoadState = ERoadState::StartRoad;

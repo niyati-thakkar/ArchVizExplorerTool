@@ -24,7 +24,18 @@ AArchVizSlabActor::AArchVizSlabActor()
 
     //StartPoint = FVector(100);
     //EndPoint = FVector(100);
-
+    // Load the material
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialAssetRoof(TEXT("/Game/Megascans/Surfaces/Stucco_Facade_wfnhfaq/MI_Stucco_Facade_wfnhfaq_2K.MI_Stucco_Facade_wfnhfaq_2K"));
+    if (MaterialAssetRoof.Succeeded())
+    {
+        RoofMaterial = MaterialAssetRoof.Object;
+    }
+    // Load the material
+    static ConstructorHelpers::FObjectFinder<UMaterialInstance> MaterialAssetFloor(TEXT("/Game/Megascans/Surfaces/Copper_Inlay_Marble_Tiles_vdlmacov/MI_Copper_Inlay_Marble_Tiles_vdlmacov_2K.MI_Copper_Inlay_Marble_Tiles_vdlmacov_2K"));
+    if (MaterialAssetFloor.Succeeded())
+    {
+        FloorMaterial = MaterialAssetFloor.Object;
+    }
     // Create and register the procedural mesh component
     ProceduralSlabMesh = CreateDefaultSubobject<UProceduralMeshComponent>(TEXT("ProceduralSlabMesh"));
     ProceduralSlabMesh->SetupAttachment(RootComponent);
@@ -69,6 +80,14 @@ void AArchVizSlabActor::AddEndPoint(FVector EP)
 {
     EndPoint = SnapToGrid(EP, FVector(20.0f));
     SpawnSlabs();
+    if(FloorMaterial)
+    {
+        SetMaterial(FloorMaterial, 1);
+    }
+    if (RoofMaterial)
+    {
+        SetMaterial(RoofMaterial, 0);
+    }
 }
 
 void AArchVizSlabActor::SpawnSlabs()

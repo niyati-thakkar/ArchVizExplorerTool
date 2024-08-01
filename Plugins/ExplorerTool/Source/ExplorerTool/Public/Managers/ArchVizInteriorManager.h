@@ -7,6 +7,7 @@
 #include "Interior/ArchVizInteriorActor.h"
 #include "ArchVizInteriorManager.generated.h"
 
+class UInteriorWidget;
 /**
  * 
  */
@@ -25,6 +26,8 @@ public:
 	void DeleteButtonClicked();
 	void PlaceActor(FHitResult HitResult);
 	void ApplyRotation(FRotator InRotation) override;
+	void UpdateUI();
 	AArchVizInteriorActor* CurrentActor;
 	TArray<AArchVizInteriorActor*> InteriorActors;
+	UInteriorWidget* InteriorWidget;
 };

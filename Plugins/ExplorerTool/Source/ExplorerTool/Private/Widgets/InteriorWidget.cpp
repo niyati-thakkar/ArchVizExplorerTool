@@ -84,19 +84,63 @@ void UInteriorWidget::HandleCeilingItemClicked(FText Text)
 
 void UInteriorWidget::HandleWallItemClicked(FText Text)
 {
-	for (FInteriorItem FloorItem : DataAsset->WallPlaceables)
+	for (FInteriorItem WallItem : DataAsset->WallPlaceables)
 	{
-		if (FloorItem.ItemName.EqualTo(Text))
+		if (WallItem.ItemName.EqualTo(Text))
 		{
 			if (PlayerController)
 			{
-				PlayerController->InteriorManager->PlaceOnWall(FloorItem.StaticMesh);
+				PlayerController->InteriorManager->PlaceOnWall(WallItem.StaticMesh);
 				break;
 			}
 		}
 	}
 }
-
+void UInteriorWidget::UpdateFloorElementSelected(UStaticMesh* mesh)
+{
+	ClearSelection();
+	for (FInteriorItem FloorItem : DataAsset->FloorPlaceables)
+	{
+		if (FloorItem.StaticMesh == mesh)
+		{
+			if (PlayerController)
+			{
+				FloorPlaceables_SB->SetButtonSelected(FloorItem.ItemName);
+				break;
+			}
+		}
+	}
+}
+void UInteriorWidget::UpdateWallElementSelected(UStaticMesh* mesh)
+{
+	ClearSelection();
+	for (FInteriorItem WallItem : DataAsset->WallPlaceables)
+	{
+		if (WallItem.StaticMesh == mesh)
+		{
+			if (PlayerController)
+			{
+				WallPlaceables_SB->SetButtonSelected(WallItem.ItemName);
+				break;
+			}
+		}
+	}
+}
+void UInteriorWidget::UpdateCeilElementSelected(UStaticMesh* mesh)
+{
+	ClearSelection();
+	for (FInteriorItem CeilItem : DataAsset->CeilingPlaceables)
+	{
+		if (CeilItem.StaticMesh == mesh)
+		{
+			if (PlayerController)
+			{
+				CeilingPlaceables_SB->SetButtonSelected(CeilItem.ItemName);
+				break;
+			}
+		}
+	}
+}
 void UInteriorWidget::HandleDeleteButtonClicked()
 {
 	PlayerController->InteriorManager->DeleteButtonClicked();
@@ -134,4 +178,10 @@ void UInteriorWidget::PopulateScrollBoxes()
 	FloorPlaceables_SB->ElementSelected.BindUObject(this, &UInteriorWidget::HandleFloorItemClicked);
 	CeilingPlaceables_SB->ElementSelected.BindUObject(this, &UInteriorWidget::HandleCeilingItemClicked);
 	
+}
+void UInteriorWidget::ClearSelection()
+{
+	FloorPlaceables_SB->RemoveSelection();
+	WallPlaceables_SB->RemoveSelection();
+	CeilingPlaceables_SB->RemoveSelection();
 }
