@@ -131,7 +131,8 @@ void AArchVizRoadActor::UpdateRoadMeshes()
         FVector2D Scale = FVector2D(RoadWidth / 100, 1.0f);
 
         USplineMeshComponent* MeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-        MeshComponent->SetMobility(EComponentMobility::Movable);
+       // RoadMesh->SetMaterial(0,RoadMaterial);
+    	MeshComponent->SetMobility(EComponentMobility::Movable);
         MeshComponent->SetStaticMesh(RoadMesh);
         MeshComponent->SetMaterial(0, RoadMaterial);
         MeshComponent->RegisterComponent();
@@ -168,7 +169,7 @@ void AArchVizRoadActor::UpdateRoadMeshes()
 
         FVector2D Scale = FVector2D(RoadWidth / 100, 1.0f);
         USplineMeshComponent* MeshComponent = NewObject<USplineMeshComponent>(this, USplineMeshComponent::StaticClass());
-        RoadMesh->SetMaterial(0, RoadMaterial);
+        //RoadMesh->SetMaterial(0, RoadMaterial);
         MeshComponent->SetStaticMesh(RoadMesh);
         //MeshComponent->SetMaterial(0, RoadMaterial);
         MeshComponent->RegisterComponent();
